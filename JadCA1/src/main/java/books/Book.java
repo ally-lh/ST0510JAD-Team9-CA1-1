@@ -23,10 +23,11 @@ public class Book {
 		this(bookID,title,author,price,publisher,pubDate,iSBN,rating,description,imageUrl,category,0);
 	}
 	
-	public Book(int bookID, String title, String author, double price, String publisher, Date pubDate, String iSBN,
+	public Book(String title, String author, double price, String publisher, Date pubDate, String iSBN,
 			float rating, String description, String imageUrl, int categoryID) {
-		this(bookID,title,author,price,publisher,pubDate,iSBN,rating,description,imageUrl,null,categoryID);
+		this(0,title,author,price,publisher,pubDate,iSBN,rating,description,imageUrl,null,categoryID);
 	}
+	
 	
 	private int bookID;
 	private String title;

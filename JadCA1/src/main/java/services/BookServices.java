@@ -168,7 +168,6 @@ public class BookServices {
 
 	        int rowsAffected = pstmt.executeUpdate();
 	        if (rowsAffected > 0) {
-	            // Retrieve the auto-generated book ID
 	            ResultSet generatedKeys = pstmt.getGeneratedKeys();
 	            if (generatedKeys.next()) {
 	                int bookId = generatedKeys.getInt(1);
@@ -212,5 +211,26 @@ public class BookServices {
 	        e.printStackTrace();
 	    }
 	    return inserted;
+	}
+	
+	public static String deleteBook(int bookID) {
+		String message = "";
+		try {
+			Connection conn = DataBaseConfig.getConnection();
+			String deleteBookQuery = "DELETE FROM Book WHERE BookID=?";
+			PreparedStatement pstmt = conn.prepareStatement(deleteBookQuery);
+			pstmt.setInt(1, bookID);
+			int rowsAffected = pstmt.executeUpdate();
+	        if (rowsAffected > 0) {
+	        	message= "Book deleted successfully";
+	        }
+	        else {
+	        	message= "Failed to delete the book";
+	        }
+		}catch (Exception e) {
+	        e.printStackTrace();
+	        message = "Error occurred while deleting the book.";
+	    }
+		return message;
 	}
 }
