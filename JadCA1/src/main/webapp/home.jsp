@@ -1,14 +1,41 @@
-<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <!DOCTYPE html>
 <html>
 <head>
-    <meta charset="UTF-8">
-    <title>Search Form</title>
+<meta charset="UTF-8">
+<title>Insert title here</title>
 </head>
 <body>
-    <form action="bookSearchServlet" method="GET">
-        <input type="text" name="searchTerm" placeholder="Enter your search term">
-        <input type="submit" value="Search">
-    </form>
+	<%@ page import="java.util.List"%>
+	<%@ page import="books.Book"%>
+	<%@ page import="category.Category"%>
+	<%
+	
+	List<Category> categoryResults = (List<Category>) request.getAttribute("categoryResults");
+	%>
+
+	<form action="search" method="GET">
+		<input type="text" name="searchTerm"
+			placeholder="Enter your search term"> <input type="submit"
+			value="Search">
+	</form>
+
+	<h1>All Books</h1>
+	<%@ include file="bookData.jsp" %>
+	
+
+	<h2>Filter by Category</h2>
+    <form id="categoryForm" action="home" method="GET">
+    <input type="hidden" name="action" value="byGenre">
+    <% for (Category category : categoryResults) { %>
+        <label>
+            <input type="checkbox" name="categoryID[]" value="<%= category.getCategoryID() %>">
+            <%= category.getCategoryName() %>
+        </label><br>
+    <% } %>
+    <input type="submit" value="Apply">
+    
+    
+</form>
+
 </body>
 </html>

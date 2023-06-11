@@ -19,7 +19,7 @@ import javax.servlet.http.HttpServletResponse;
 /**
  * Servlet implementation class publicBookServlet
  */
-@WebServlet("/bookSearchServlet")
+@WebServlet("/search")
 public class bookSearchServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
        
@@ -70,9 +70,10 @@ public class bookSearchServlet extends HttpServlet {
 	        Connection conn = DriverManager.getConnection(jdbcUrl, username, password);
 			
 		    // Step 5: Execute SQL Command
-		    String sqlStr = "select * from Book inner join Category on Category.CategoryID= Book.CategoryID where Book.Title like ?";
+		    String sqlStr = "select * from Book inner join Category on Category.CategoryID= Book.CategoryID where Book.Title like ? OR Book.Author like ?";
 		    PreparedStatement pstmt = conn.prepareStatement(sqlStr);
 		    pstmt.setString(1,searchTerm);
+		    pstmt.setString(2, searchTerm);
 		    
 		    ResultSet rs = pstmt.executeQuery();
 		    while (rs.next()) {

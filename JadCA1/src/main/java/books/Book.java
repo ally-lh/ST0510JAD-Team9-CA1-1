@@ -2,7 +2,7 @@ package books;
 import java.sql.Date;
 public class Book {
 	public Book(int bookID, String title, String author, double price, String publisher, Date pubDate, String iSBN,
-			float rating, String description, String imageUrl, String category) {
+			float rating, String description, String imageUrl, String category, int categoryID) {
 		super();
 		this.bookID = bookID;
 		this.title = title;
@@ -15,20 +15,19 @@ public class Book {
 		this.description = description;
 		this.imageUrl = imageUrl;
 		this.category = category;
+		this.categoryID = categoryID;
 	}
+	
 	public Book(int bookID, String title, String author, double price, String publisher, Date pubDate, String iSBN,
-			float rating, String description) {
-		super();
-		this.bookID = bookID;
-		this.title = title;
-		this.author = author;
-		this.price = price;
-		this.publisher = publisher;
-		this.pubDate = pubDate;
-		ISBN = iSBN;
-		this.rating = rating;
-		this.description = description;
+			float rating, String description, String imageUrl, String category) {
+		this(bookID,title,author,price,publisher,pubDate,iSBN,rating,description,imageUrl,category,0);
 	}
+	
+	public Book(int bookID, String title, String author, double price, String publisher, Date pubDate, String iSBN,
+			float rating, String description, String imageUrl, int categoryID) {
+		this(bookID,title,author,price,publisher,pubDate,iSBN,rating,description,imageUrl,null,categoryID);
+	}
+	
 	private int bookID;
 	private String title;
 	private String author;
@@ -40,6 +39,7 @@ public class Book {
 	private String description;
 	private String imageUrl;
 	private String category;
+	private int categoryID;
 	public int getBookID() {
 		return bookID;
 	}
@@ -105,5 +105,13 @@ public class Book {
 	}
 	public void setCategory(String category) {
 		this.category = category;
+	}
+
+	public int getCategoryID() {
+		return categoryID;
+	}
+
+	public void setCategoryID(int categoryID) {
+		this.categoryID = categoryID;
 	}
 }
