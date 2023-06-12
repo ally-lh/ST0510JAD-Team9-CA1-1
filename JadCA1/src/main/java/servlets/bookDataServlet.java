@@ -56,11 +56,11 @@ public class bookDataServlet extends HttpServlet {
 	        List<Integer> categoryIdList = new ArrayList<>();
 	        if (categoryIDs != null) {
 	            for (String categoryId : categoryIDs) {
+	            	System.out.println(categoryId);
 	                int categoryId_int = Integer.parseInt(categoryId);
 	                categoryIdList.add(categoryId_int);
 	            }
 	        }
-
 			List<Book> categoryDataResult = BookServices.getBooksByCategory(categoryIdList);
 			List<Category> categoryData = CategoryServices.getAllCategory();
 			request.setAttribute("bookResults", categoryDataResult);

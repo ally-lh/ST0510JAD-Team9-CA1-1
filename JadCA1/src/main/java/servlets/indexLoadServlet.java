@@ -37,10 +37,23 @@ public class indexLoadServlet extends HttpServlet {
 		// TODO Auto-generated method stub
 		// response.getWriter().append("Served at: ").append(request.getContextPath());
 		RequestDispatcher dispatcher;
-		List<Book> bookDataResults = BookServices.fetchBookData();
+		String pageNumberStr = request.getParameter("pageNumber");
+		String recordsPerPageStr = request.getParameter("recordPerPage");
+		int pageNumber,recordsPerPage;
+		if(pageNumberStr == null || recordsPerPageStr == null ) {
+			pageNumber = 1;
+			recordsPerPage = 6;
+		}
+		else {
+			pageNumber = Integer.parseInt(pageNumberStr);
+			recordsPerPage = Integer.parseInt(recordsPerPageStr);
+		}
+		List<Book> bookDataResults = BookServices.fetchBookData(pageNumber,recordsPerPage);
+		int bookAmount = BookServices.fetchBookNumbers();
 		List<Category> categoryDataResult = CategoryServices.getAllCategory();
 		request.setAttribute("bookResults", bookDataResults);
 		request.setAttribute("categoryResults", categoryDataResult);
+		request.setAttribute("bookAmount", bookAmount);
 		dispatcher = request.getRequestDispatcher("home.jsp");
 		dispatcher.forward(request, response);
 	}

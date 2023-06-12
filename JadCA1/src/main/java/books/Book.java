@@ -2,7 +2,7 @@ package books;
 import java.sql.Date;
 public class Book {
 	public Book(int bookID, String title, String author, double price, String publisher, Date pubDate, String iSBN,
-			float rating, String description, String imageUrl, String category, int categoryID) {
+			float rating, String description, String imageUrl, String category, int categoryID,int quantity) {
 		super();
 		this.bookID = bookID;
 		this.title = title;
@@ -16,16 +16,22 @@ public class Book {
 		this.imageUrl = imageUrl;
 		this.category = category;
 		this.categoryID = categoryID;
+		this.quantity = quantity;
 	}
 	
 	public Book(int bookID, String title, String author, double price, String publisher, Date pubDate, String iSBN,
-			float rating, String description, String imageUrl, String category) {
-		this(bookID,title,author,price,publisher,pubDate,iSBN,rating,description,imageUrl,category,0);
+			float rating, String description, String imageUrl, String category,int quantity) {
+		this(bookID,title,author,price,publisher,pubDate,iSBN,rating,description,imageUrl,category,0,quantity);
 	}
 	
 	public Book(String title, String author, double price, String publisher, Date pubDate, String iSBN,
-			float rating, String description, String imageUrl, int categoryID) {
-		this(0,title,author,price,publisher,pubDate,iSBN,rating,description,imageUrl,null,categoryID);
+			float rating, String description, String imageUrl, int categoryID,int quantity) {
+		this(0,title,author,price,publisher,pubDate,iSBN,rating,description,imageUrl,null,categoryID,quantity);
+	}
+	
+	public Book(int bookID,String title, String author, double price, String publisher, Date pubDate, String iSBN,
+			float rating, String description, String imageUrl, String category) {
+		this(bookID,title,author,price,publisher,pubDate,iSBN,rating,description,imageUrl,category,0,0);
 	}
 	
 	
@@ -41,6 +47,7 @@ public class Book {
 	private String imageUrl;
 	private String category;
 	private int categoryID;
+	private int quantity;
 	public int getBookID() {
 		return bookID;
 	}
@@ -114,5 +121,13 @@ public class Book {
 
 	public void setCategoryID(int categoryID) {
 		this.categoryID = categoryID;
+	}
+
+	public int getQuantity() {
+		return quantity;
+	}
+
+	public void setQuantity(int quantity) {
+		this.quantity = quantity;
 	}
 }

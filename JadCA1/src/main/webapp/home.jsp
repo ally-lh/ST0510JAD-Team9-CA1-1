@@ -28,7 +28,7 @@
     <input type="hidden" name="action" value="byGenre">
     <% for (Category category : categoryResults) { %>
         <label>
-            <input type="checkbox" name="categoryID[]" value="<%= category.getCategoryID() %>">
+            <input type="checkbox" name="categoryID" value="<%= category.getCategoryID() %>">
             <%= category.getCategoryName() %>
         </label><br>
     <% } %>

@@ -46,7 +46,18 @@ public class adminServlet extends HttpServlet {
 		String userRole = (String) session.getAttribute("userRole");
 		if(userRole.equals("admin")) {
 			RequestDispatcher dispatcher;
-			List<Book> bookDataResults = BookServices.fetchBookData();
+			String pageNumberStr = request.getParameter("pageNumber");
+			String recordsPerPageStr = request.getParameter("recordPerPage");
+			int pageNumber,recordsPerPage;
+			if(pageNumberStr == null || recordsPerPageStr == null ) {
+				pageNumber = 1;
+				recordsPerPage = 6;
+			}
+			else {
+				pageNumber = Integer.parseInt(pageNumberStr);
+				recordsPerPage = Integer.parseInt(recordsPerPageStr);
+			}
+			List<Book> bookDataResults = BookServices.fetchBookData(pageNumber,recordsPerPage);
 			List<Category> categoryDataResult = CategoryServices.getAllCategory();
 			request.setAttribute("bookResults", bookDataResults);
 			request.setAttribute("categoryResults", categoryDataResult);
@@ -89,8 +100,8 @@ public class adminServlet extends HttpServlet {
 						@SuppressWarnings("unchecked")
 						Map<String, Object> uploadResult = cloudinary.uploader().upload(imagePart.getInputStream(), ObjectUtils.emptyMap());
 						String imageUrl = (String) uploadResult.get("url");
-						Book newBook = new Book(title,author,price,publisher,pubDate,ISBN,rating,description,imageUrl,categoryID); 
-						String message = BookServices.addBook(newBook, quantity);
+						Book newBook = new Book(title,author,price,publisher,pubDate,ISBN,rating,description,imageUrl,categoryID,quantity); 
+						String message = BookServices.addBook(newBook);
 						request.setAttribute("message", message);
 						doGet(request,response);
 					}
@@ -102,6 +113,35 @@ public class adminServlet extends HttpServlet {
 					}
 					break;
 				case "updateBook": 
+					try {
+						String title = request.getParameter("title");
+						String author = request.getParameter("author");
+						double price = Double.parseDouble(request.getParameter("price"));
+						String publisher = request.getParameter("publisher");
+						String dateString = request.getParameter("pubDate");
+						SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+						Date pubDate = (Date) dateFormat.parse(dateString);
+						String ISBN = request.getParameter("ISBN");
+						float rating = Float.parseFloat(request.getParameter("rating"));
+						String description = request.getParameter("description");
+						int categoryID = Integer.parseInt(request.getParameter("category"));
+						int quantity = Integer.parseInt(request.getParameter("quantity"));
+						Part imagePart = request.getPart("image");
+						Cloudinary cloudinary = CloudinaryConfig.getImageStoreConnection();
+						@SuppressWarnings("unchecked")
+						Map<String, Object> uploadResult = cloudinary.uploader().upload(imagePart.getInputStream(), ObjectUtils.emptyMap());
+						String imageUrl = (String) uploadResult.get("url");
+						Book updateBook = new Book(title,author,price,publisher,pubDate,ISBN,rating,description,imageUrl,categoryID,quantity); 
+						String message = BookServices.updateBook(updateBook);
+						request.setAttribute("message", message);
+						doGet(request,response);
+					}
+					catch(Exception e) {
+						e.printStackTrace();
+						request.setAttribute("message", e);
+						dispatcher = request.getRequestDispatcher("updateBook.jsp");
+						dispatcher.forward(request, response);
+					}
 					break;
 				case "deletBook":
 					try {
@@ -120,6 +160,12 @@ public class adminServlet extends HttpServlet {
 				case "updateCategory":
 					break;
 				case "deleteCategory":
+					break;
+				case "addUser":
+					break;
+				case "updateUser":
+					break;
+				case "deleteUser":
 					break;
 				default:
 					String errorMessage = "Invalid action specified.";
