@@ -44,6 +44,10 @@ public class adminServlet extends HttpServlet {
 //		response.getWriter().append("Served at: ").append(request.getContextPath());
 		HttpSession session = request.getSession();
 		String userRole = (String) session.getAttribute("userRole");
+		if(userRole == null ) {
+			response.sendRedirect("login.jsp");
+			return;
+		}
 		if(userRole.equals("admin")) {
 			RequestDispatcher dispatcher;
 			String pageNumberStr = request.getParameter("pageNumber");

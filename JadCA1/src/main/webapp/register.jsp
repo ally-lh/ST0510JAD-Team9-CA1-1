@@ -32,7 +32,7 @@
     <label for="confirm-password">Confirm Password:</label>
     <input type="password" id="confirm-password" name="confirm-password" required><br><br>
 
-    <input type="submit" value="Register">
+    <input type="submit" name ="action" value="register">
   </form>
 </body>
 </html>

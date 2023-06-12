@@ -29,6 +29,7 @@
                 <td><%= book.getPubDate() %></td>
             </tr>
         </table>
+        
 <%
     } else {
         // Book not found or not available

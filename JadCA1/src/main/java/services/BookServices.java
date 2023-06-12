@@ -109,7 +109,7 @@ public class BookServices {
 				String description = rs.getString("Description");
 				String imageUrl = rs.getString("Image");
 				String categoryName = rs.getString("CategoryName");
-				int quantity = rs.getInt("Quantity");
+				int quantity = rs.getInt("Qty");
 				// Create a Book object and set the retrieved values
 				bookData = new Book(bookId, title, author, price, publisher, pubDate, isbn, rating, description,
 						imageUrl, categoryName,quantity);

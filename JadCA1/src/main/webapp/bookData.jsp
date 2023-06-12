@@ -2,8 +2,7 @@
 <%@ page import="java.util.List"%>
 <%
 List<Book> bookResults = (List<Book>) request.getAttribute("bookResults");
-
-
+//int bookAmount = (int) request.getAttribute("bookAmount");
 if (bookResults != null) {
 %>
 <%
@@ -12,12 +11,11 @@ if (bookResults != null) {
 	<p>No results found</p>
 	<%
 	} else {
-		int pageSize = 6; // Number of books to display per page
-		int totalBooks = bookResults.size();
-		int totalPages = (int) Math.ceil((double) totalBooks / pageSize);
-		String pageNumber = request.getParameter("page");
-		int currentPage = (pageNumber != null) ? Integer.parseInt(pageNumber) : 1;
-
+		//int pageSize = 6; // Number of books to display per page
+		//int totalPages = (int) Math.ceil((double) bookAmount / pageSize);
+		//String pageNumber = request.getParameter("page");
+		//int currentPage = (pageNumber != null) ? Integer.parseInt(pageNumber) : 1;
+		
 	%>
 	<table>
 		<tr>
@@ -49,23 +47,6 @@ if (bookResults != null) {
 		}
 		%>
 	</table>
-	<div class="pagination">
-    <% if (currentPage > 1) { %>
-        <a href="?page=<%= currentPage - 1 %>">&laquo; Previous</a>
-    <% } %>
-
-    <% for (int pageCurrent = 1; pageCurrent <= totalPages; pageCurrent++) { %>
-        <% if (pageCurrent == currentPage) { %>
-            <span class="active"><%= page %></span>
-        <% } else { %>
-            <a href="?page=<%= page %>"><%= page %></a>
-        <% } %>
-    <% } %>
-
-    <% if (currentPage < totalPages) { %>
-        <a href="?page=<%= pageNumber + 1 %>">Next &raquo;</a>
-    <% } %>
-</div>
 	<%
 	}
 	%>

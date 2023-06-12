@@ -44,17 +44,6 @@ public class userServlet extends HttpServlet {
 
 		String user = request.getParameter("UserIdentification");
 		String password = request.getParameter("password");
-		String pageNumberStr = request.getParameter("pageNumber");
-		String recordsPerPageStr = request.getParameter("recordPerPage");
-		int pageNumber,recordsPerPage;
-		if(pageNumberStr == null || recordsPerPageStr == null ) {
-			pageNumber = 1;
-			recordsPerPage = 6;
-		}
-		else {
-			pageNumber = Integer.parseInt(pageNumberStr);
-			recordsPerPage = Integer.parseInt(recordsPerPageStr);
-		}
 		if (user == null || user.isEmpty() || user.isBlank()) {
 			request.setAttribute("error", "Username is required.");
 			dispatcher = request.getRequestDispatcher("login.jsp");
@@ -70,12 +59,8 @@ public class userServlet extends HttpServlet {
 		int custID = UserServices.login(user, password);
 		if (custID > 0) {
 			session.setAttribute("userID", custID);
-			List<Book> bookDataResults = BookServices.fetchBookData(pageNumber,recordsPerPage);
-			List<Category> categoryDataResult = CategoryServices.getAllCategory();
-			request.setAttribute("bookResults", bookDataResults);
-			request.setAttribute("categoryResults", categoryDataResult);
-			dispatcher = request.getRequestDispatcher("login.jsp");
-			dispatcher.forward(request, response);
+			String contextPath = request.getContextPath();
+			response.sendRedirect(contextPath + "/");
 		} else {
 			request.setAttribute("error", "user credentials are incorrect.");
 			dispatcher = request.getRequestDispatcher("login.jsp");
