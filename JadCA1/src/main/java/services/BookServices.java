@@ -65,6 +65,24 @@ public class BookServices {
 	    return bookData;
 	}
 
+	public static int fetchBookNumbers() {
+		int bookNum= 0;
+		try {
+			Connection conn = DataBaseConfig.getConnection();
+			String fetchBookNumberQuery =
+					"SELECT COUNT(BookID) "
+					+ "as bookAmount "
+					+ "FROM Book";
+			Statement statement = conn.createStatement();
+			ResultSet rs = statement.executeQuery(fetchBookNumberQuery);
+			while(rs.next()) {
+				bookNum = rs.getInt("bookAmount");
+			}
+		}catch (Exception e) {
+			e.printStackTrace();
+		} 
+		return bookNum;
+	}
 	public static Book fetchBookDataByID(int id) {
 		Book bookData = null;
 		try {
