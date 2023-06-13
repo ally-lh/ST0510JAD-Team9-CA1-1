@@ -1,15 +1,23 @@
-<%@ page import="models.Book" %>
+<%@ page language="java" contentType="text/html; charset=ISO-8859-1"
+	pageEncoding="ISO-8859-1"%>
+<%@ page import="models.Book"%>
 <%@ page import="java.util.List"%>
-
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="ISO-8859-1">
+<title>Insert title here</title>
+</head>
+<body>
 <%
-List<Book> bookResults = (List<Book>) request.getAttribute("bookResults");
+List<Book> cart = (List<Book>) session.getAttribute("Cart");
 //int bookAmount = (int) request.getAttribute("bookAmount");
-if (bookResults != null) {
+if (cart != null) {
 %>
 <%
-	if (bookResults.isEmpty()) {
+	if (cart.isEmpty()) {
 	%>
-	<p>No results found</p>
+	<p>There is no item inside your cart.</p>
 	<%
 	} else {
 		//int pageSize = 6; // Number of books to display per page
@@ -21,30 +29,17 @@ if (bookResults != null) {
 	<table>
 		<tr>
 			<th></th>
-			<th>ID</th>
 			<th>Name</th>
 			<th>Price</th>
-			<th>Description</th>
-			<th>Release Date</th>
-			<th>Action</th>
 		</tr>
 		<%
-		for (Book book : bookResults) {
+		for (Book book : cart) {
 		%>
 		<tr>
 			<td><img src=<%= "https://res.cloudinary.com/dgf2upkwf/image/upload/v1686673253/"+book.getImageUrl()+".jpg" %> alt="Image Description" width="200px"></td>
-			<td><%=book.getBookID()%></td>
 			<td><%=book.getTitle()%></td>
 			<td><%=book.getPrice()%></td>
-			<td><%=book.getDescription()%></td>
-			<td><%=book.getPubDate()%></td>
-			<td>
-				<form action="home" method="GET">
-					<input type="hidden" name="action" value="byID"> <input
-						type="hidden" name="bookID" value="<%=book.getBookID()%>">
-					<input type="submit" value="View Details">
-				</form>
-			</td>
+			<td><%=book.getQuantity() %></td>
 		</tr>
 		<%
 		}
@@ -56,7 +51,9 @@ if (bookResults != null) {
 <%
 } else {
 %>
-<p>No book details available</p>
+<p>There is nothing inside your cart</p>
 <%
 }
 %>
+</body>
+</html>

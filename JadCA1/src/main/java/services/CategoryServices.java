@@ -6,7 +6,7 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
-import category.Category;
+import models.Category;
 import config.DataBaseConfig;
 public class CategoryServices {
 	public static List<Category> getAllCategory() {

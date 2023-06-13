@@ -9,9 +9,7 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
-import books.Book;
-import category.Category;
+import models.*;
 import services.*;
 /**
  * Servlet implementation class bookDataServlet

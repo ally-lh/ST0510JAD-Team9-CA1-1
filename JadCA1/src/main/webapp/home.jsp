@@ -6,11 +6,9 @@
 </head>
 <body>
 	<%@ page import="java.util.List"%>
-	<%@ page import="books.Book"%>
-	<%@ page import="category.Category"%>
+	<%@ page import="models.*"%>
 	
 	<%
-	
 	List<Category> categoryResults = (List<Category>) request.getAttribute("categoryResults");
 	%>
 

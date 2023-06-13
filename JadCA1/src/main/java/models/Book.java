@@ -1,4 +1,4 @@
-package books;
+package models;
 import java.sql.Date;
 public class Book {
 	public Book(int bookID, String title, String author, double price, String publisher, Date pubDate, String iSBN,
@@ -32,6 +32,10 @@ public class Book {
 	public Book(int bookID,String title, String author, double price, String publisher, Date pubDate, String iSBN,
 			float rating, String description, String imageUrl, String category) {
 		this(bookID,title,author,price,publisher,pubDate,iSBN,rating,description,imageUrl,category,0,0);
+	}
+	
+	public Book(String title,double price, String imageUrl, int quantity) {
+		this(0,title,null,price,null,null,null,0,null,imageUrl,null,0,quantity);
 	}
 	
 	

@@ -9,7 +9,7 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
-import books.Book;
+import models.Book;
 import config.*;
 import com.cloudinary.*;
 import com.cloudinary.utils.ObjectUtils;
@@ -127,6 +127,48 @@ public class BookServices {
 			e.printStackTrace();
 		}
 		return bookData;
+	}
+	
+	public static List<Book> performSearch(String searchTerm){
+		searchTerm = "%"+searchTerm+"%";
+		List<Book> searchResults = new ArrayList<>();
+		try {
+			Connection conn = DataBaseConfig.getConnection();
+		    String sqlStr = "select * from Book inner join Category on Category.CategoryID= Book.CategoryID where Book.Title like ? OR Book.Author like ?";
+		    PreparedStatement pstmt = conn.prepareStatement(sqlStr);
+		    pstmt.setString(1,searchTerm);
+		    pstmt.setString(2, searchTerm);
+		    
+		    ResultSet rs = pstmt.executeQuery();
+		    while (rs.next()) {
+	            // Retrieve all the necessary fields from the result set
+	            int bookId = rs.getInt("BookID");
+	            String title = rs.getString("Title");
+	            double price = rs.getDouble("Price");
+	            String author = rs.getString("Author");
+	            String publisher = rs.getString("Publisher");
+	            Date pubDate = rs.getDate("PubDate");
+	            String isbn = rs.getString("ISBN");
+	            float rating = rs.getFloat("Rating");
+	            String description = rs.getString("Description");
+	            String imageUrl = rs.getString("Image");
+	            String categoryName= rs.getString("CategoryName");
+	            // Create a Book object and set the retrieved values
+	            Book book = new Book(bookId,title,author,price,publisher,pubDate,isbn,rating,description,imageUrl,categoryName);
+	            System.out.println(title);
+	            // Add the book to the search results list
+	            searchResults.add(book);
+	        }
+		 // Step 6: Close the resources
+	        rs.close();
+	        pstmt.close();
+	        conn.close();
+
+		} catch(Exception e){
+			e.printStackTrace();
+		}
+		return searchResults;
+		
 	}
 
 	public static List<Book> getBooksByCategory(List<Integer> categoryIDs) {

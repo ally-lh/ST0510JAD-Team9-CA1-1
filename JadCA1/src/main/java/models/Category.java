@@ -1,4 +1,4 @@
-package category;
+package models;
 public class Category {
 	public Category(int categoryID, String categoryName) {
 		super();
