@@ -8,6 +8,7 @@
 	<%@ page import="java.util.List"%>
 	<%@ page import="books.Book"%>
 	<%@ page import="category.Category"%>
+	
 	<%
 	
 	List<Category> categoryResults = (List<Category>) request.getAttribute("categoryResults");

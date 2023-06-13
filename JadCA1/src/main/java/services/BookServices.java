@@ -10,7 +10,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import books.Book;
-import config.DataBaseConfig;
+import config.*;
+import com.cloudinary.*;
+import com.cloudinary.utils.ObjectUtils;
 
 public class BookServices {
 	public static List<Book> fetchBookData(int pageNumber, int recordsPerPage) {
@@ -214,7 +216,7 @@ public class BookServices {
 	            if (generatedKeys.next()) {
 	                int bookId = generatedKeys.getInt(1);
 
-	                String addInventoryQuery = "INSERT INTO Inventory (BookID, Quantity) VALUES (?, ?)";
+	                String addInventoryQuery = "INSERT INTO Inventory (BookID, Qty) VALUES (?, ?)";
 	                inventoryStatement = conn.prepareStatement(addInventoryQuery);
 	                inventoryStatement.setInt(1, bookId);
 	                inventoryStatement.setInt(2, newBook.getQuantity());
@@ -261,10 +263,11 @@ public class BookServices {
 	}
 
 	
-	public static String deleteBook(int bookID) {
+	public static String deleteBook(int bookID,String imageUrl) {
 		String message = "";
 		try {
 			Connection conn = DataBaseConfig.getConnection();
+			Cloudinary cloudinary = CloudinaryConfig.getCloudinaryInstance();
 			String deleteBookQuery = 
 					"DELETE FROM Book "
 					+ "WHERE BookID=?";
@@ -272,6 +275,7 @@ public class BookServices {
 			pstmt.setInt(1, bookID);
 			int rowsAffected = pstmt.executeUpdate();
 	        if (rowsAffected > 0) {
+	        	cloudinary.uploader().destroy(imageUrl, ObjectUtils.emptyMap());
 	        	message= "Book deleted successfully";
 	        }
 	        else {

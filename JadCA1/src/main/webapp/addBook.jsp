@@ -11,8 +11,7 @@
 <body>
 	<h1>Add New Book</h1>
 
-	<form action="admin" method="post"
-		enctype="multipart/form-data">
+	<form action="admin" method="Post" enctype="multipart/form-data">
 		<input type="hidden" name="action" value="addBook">
 		<label for="title">Title:</label> 
 		<input type="text" name="title" required><br> 

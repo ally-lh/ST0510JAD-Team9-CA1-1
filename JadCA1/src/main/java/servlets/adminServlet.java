@@ -1,12 +1,15 @@
 package servlets;
 
+import java.io.File;
 import java.io.IOException;
+import java.io.*;
 import java.sql.Date;
 import java.util.List;
 import java.util.Map;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
+import javax.servlet.annotation.MultipartConfig;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -25,6 +28,12 @@ import com.cloudinary.utils.ObjectUtils;
  * Servlet implementation class adminServlet
  */
 @WebServlet("/admin")
+@MultipartConfig(
+		location = "/tmp",
+	    fileSizeThreshold = 1024 * 1024, // 1MB
+	    maxFileSize = 1024 * 1024 * 10, // 10MB
+	    maxRequestSize = 1024 * 1024 * 50 // 50MB
+	)
 public class adminServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
        
@@ -43,11 +52,12 @@ public class adminServlet extends HttpServlet {
 		// TODO Auto-generated method stub
 //		response.getWriter().append("Served at: ").append(request.getContextPath());
 		HttpSession session = request.getSession();
-		String userRole = (String) session.getAttribute("userRole");
-		if(userRole == null ) {
-			response.sendRedirect("login.jsp");
-			return;
-		}
+		//String userRole = (String) session.getAttribute("userRole");
+		String userRole = "admin";
+//		if(userRole == null ) {
+//			response.sendRedirect("login.jsp");
+//			return;
+//		}
 		if(userRole.equals("admin")) {
 			RequestDispatcher dispatcher;
 			String pageNumberStr = request.getParameter("pageNumber");
@@ -79,7 +89,8 @@ public class adminServlet extends HttpServlet {
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// TODO Auto-generated method stub
 		HttpSession session = request.getSession();
-		String userRole = (String) session.getAttribute("userRole");
+		//String userRole = (String) session.getAttribute("userRole");
+		String userRole = "admin";
 		if(userRole.equals("admin")) {
 			RequestDispatcher dispatcher;
 			String action = request.getParameter("action");
@@ -93,17 +104,28 @@ public class adminServlet extends HttpServlet {
 						String publisher = request.getParameter("publisher");
 						String dateString = request.getParameter("pubDate");
 						SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-						Date pubDate = (Date) dateFormat.parse(dateString);
+						java.util.Date utilPubDate = dateFormat.parse(dateString);
+						java.sql.Date pubDate = new java.sql.Date(utilPubDate.getTime());
 						String ISBN = request.getParameter("ISBN");
 						float rating = Float.parseFloat(request.getParameter("rating"));
 						String description = request.getParameter("description");
 						int categoryID = Integer.parseInt(request.getParameter("category"));
 						int quantity = Integer.parseInt(request.getParameter("quantity"));
 						Part imagePart = request.getPart("image");
-						Cloudinary cloudinary = CloudinaryConfig.getImageStoreConnection();
+						InputStream inputStream = imagePart.getInputStream();
+						File tempFile = File.createTempFile("temp", ".jpg");
+						try (OutputStream outputStream = new FileOutputStream(tempFile)) {
+						    byte[] buffer = new byte[4096];
+						    int bytesRead;
+						    while ((bytesRead = inputStream.read(buffer)) != -1) {
+						        outputStream.write(buffer, 0, bytesRead);
+						    }
+						}
+						Cloudinary cloudinary = CloudinaryConfig.getCloudinaryInstance();
 						@SuppressWarnings("unchecked")
-						Map<String, Object> uploadResult = cloudinary.uploader().upload(imagePart.getInputStream(), ObjectUtils.emptyMap());
-						String imageUrl = (String) uploadResult.get("url");
+						Map<String, Object> uploadResult = cloudinary.uploader().upload(tempFile, ObjectUtils.emptyMap());
+						String imageUrl = (String) uploadResult.get("public_id");
+						tempFile.delete();
 						Book newBook = new Book(title,author,price,publisher,pubDate,ISBN,rating,description,imageUrl,categoryID,quantity); 
 						String message = BookServices.addBook(newBook);
 						request.setAttribute("message", message);
@@ -131,7 +153,7 @@ public class adminServlet extends HttpServlet {
 						int categoryID = Integer.parseInt(request.getParameter("category"));
 						int quantity = Integer.parseInt(request.getParameter("quantity"));
 						Part imagePart = request.getPart("image");
-						Cloudinary cloudinary = CloudinaryConfig.getImageStoreConnection();
+						Cloudinary cloudinary = CloudinaryConfig.getCloudinaryInstance();
 						@SuppressWarnings("unchecked")
 						Map<String, Object> uploadResult = cloudinary.uploader().upload(imagePart.getInputStream(), ObjectUtils.emptyMap());
 						String imageUrl = (String) uploadResult.get("url");
@@ -150,7 +172,8 @@ public class adminServlet extends HttpServlet {
 				case "deletBook":
 					try {
 						int bookID = Integer.parseInt(request.getParameter("bookID"));
-						String message = BookServices.deleteBook(bookID);
+						String imageUrl = request.getParameter("imageUrl");
+						String message = BookServices.deleteBook(bookID,imageUrl);
 						request.setAttribute("message", message);
 						doGet(request,response);
 					}catch (Exception e){

@@ -46,6 +46,7 @@
 				<form action="admin" method="POST">
 					<input type="hidden" name="action" value="deleteBook"> <input
 						type="hidden" name="bookID" value="<%=book.getBookID()%>">
+						<input type="hidden" name="imageUrl" value="<%= book.getImageUrl() %>">
 					<input type="submit" value="Delete">
 				</form>
 			</td>
@@ -83,6 +84,6 @@
 		}
 		%>
 	</table>
-	<a href="addBook.jsp"><button>Add New Book</button></a>
+	<a href=<%= request.getContextPath()+"/addBook" %>><button>Add New Book</button></a>
 </body>
 </html>

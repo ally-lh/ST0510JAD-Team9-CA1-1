@@ -1,5 +1,6 @@
 <%@ page import="books.Book" %>
 <%@ page import="java.util.List"%>
+
 <%
 List<Book> bookResults = (List<Book>) request.getAttribute("bookResults");
 //int bookAmount = (int) request.getAttribute("bookAmount");
@@ -19,6 +20,7 @@ if (bookResults != null) {
 	%>
 	<table>
 		<tr>
+			<th></th>
 			<th>ID</th>
 			<th>Name</th>
 			<th>Price</th>
@@ -30,6 +32,7 @@ if (bookResults != null) {
 		for (Book book : bookResults) {
 		%>
 		<tr>
+			<td><img src=<%= "https://res.cloudinary.com/dgf2upkwf/image/upload/v1686673253/"+book.getImageUrl()+".jpg" %> alt="Image Description" width="200px"></td>
 			<td><%=book.getBookID()%></td>
 			<td><%=book.getTitle()%></td>
 			<td><%=book.getPrice()%></td>
