@@ -11,6 +11,7 @@ import javax.servlet.http.HttpServletResponse;
 import models.*;
 import services.BookServices;
 import services.CategoryServices;
+
 /**
  * Servlet implementation class indexLoadServlet
  */
@@ -36,17 +37,21 @@ public class indexLoadServlet extends HttpServlet {
 		// response.getWriter().append("Served at: ").append(request.getContextPath());
 		RequestDispatcher dispatcher;
 		String pageNumberStr = request.getParameter("pageNumber");
+		System.out.println(pageNumberStr);
 		String recordsPerPageStr = request.getParameter("recordPerPage");
-		int pageNumber,recordsPerPage;
-		if(pageNumberStr == null || recordsPerPageStr == null ) {
-			pageNumber = 1;
-			recordsPerPage = 6;
+		if (pageNumberStr == null) {
+			pageNumberStr = "1";
+			System.out.println("pageNumber is null");
 		}
-		else {
-			pageNumber = Integer.parseInt(pageNumberStr);
-			recordsPerPage = Integer.parseInt(recordsPerPageStr);
+		if (recordsPerPageStr == null) {
+			recordsPerPageStr = "6";
+			System.out.println("records per page is null");
 		}
-		List<Book> bookDataResults = BookServices.fetchBookData(pageNumber,recordsPerPage);
+		int pageNumber = Integer.parseInt(pageNumberStr);
+		int recordsPerPage = Integer.parseInt(recordsPerPageStr);
+		System.out.println(pageNumber);
+		System.out.println(recordsPerPage);
+		List<Book> bookDataResults = BookServices.fetchBookData(pageNumber, recordsPerPage);
 		int bookAmount = BookServices.fetchBookNumbers();
 		List<Category> categoryDataResult = CategoryServices.getAllCategory();
 		request.setAttribute("bookResults", bookDataResults);

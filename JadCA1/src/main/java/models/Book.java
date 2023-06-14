@@ -34,8 +34,8 @@ public class Book {
 		this(bookID,title,author,price,publisher,pubDate,iSBN,rating,description,imageUrl,category,0,0);
 	}
 	
-	public Book(String title,double price, String imageUrl, int quantity) {
-		this(0,title,null,price,null,null,null,0,null,imageUrl,null,0,quantity);
+	public Book(int bookID,String title,double price, String imageUrl, int quantity) {
+		this(bookID,title,null,price,null,null,null,0,null,imageUrl,null,0,quantity);
 	}
 	
 	

@@ -3,7 +3,7 @@
 
 <%
 List<Book> bookResults = (List<Book>) request.getAttribute("bookResults");
-//int bookAmount = (int) request.getAttribute("bookAmount");
+int bookAmount = (int) request.getAttribute("bookAmount");
 if (bookResults != null) {
 %>
 <%
@@ -12,10 +12,10 @@ if (bookResults != null) {
 	<p>No results found</p>
 	<%
 	} else {
-		//int pageSize = 6; // Number of books to display per page
-		//int totalPages = (int) Math.ceil((double) bookAmount / pageSize);
-		//String pageNumber = request.getParameter("page");
-		//int currentPage = (pageNumber != null) ? Integer.parseInt(pageNumber) : 1;
+		int pageSize = 6; // Number of books to display per page
+		int totalPages = (int) Math.ceil((double) bookAmount / pageSize);
+		String pageNumber = request.getParameter("page");
+		int currentPage = (pageNumber != null) ? Integer.parseInt(pageNumber) : 1;
 		
 	%>
 	<table>
@@ -50,6 +50,17 @@ if (bookResults != null) {
 		}
 		%>
 	</table>
+	<div class="pagination">
+    <%
+    for (int i = 1; i <= totalPages; i++) {
+        // Add the active class to the current page
+        String activeClass = (i == currentPage) ? "active" : "";
+    %>
+    <a href="?pageNumber=<%=i%>" class="<%=activeClass%>"><%=i%></a>
+    <%
+    }
+    %>
+</div>
 	<%
 	}
 	%>

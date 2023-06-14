@@ -99,7 +99,23 @@ public class CartServlet extends HttpServlet {
 			request.getRequestDispatcher(request.getContextPath()+"/home?action=byID&bookID="+bookID).forward(request, response);
 			return;
 		}
-		bookList.add(new Book(title,price,imageUrl,quantity));
+		
+		boolean bookExists = false;
+	    for (Book book : bookList) {
+	    	System.out.println(book.getTitle());
+	        if (book.getBookID() == bookID) {
+	            book.setQuantity(book.getQuantity() + quantity); // Update the quantity
+	            bookExists = true;
+	            break;
+	        }
+	    }
+	    System.out.println(bookExists);
+	    
+	    // If the book doesn't exist in the bookList, add it as a new entry
+	    if (!bookExists) {
+	        bookList.add(new Book(bookID,title, price, imageUrl, quantity));
+	    }
+	    
 		session.setAttribute("Cart", bookList);
 		response.sendRedirect(request.getContextPath()+"/home?action=byID&bookID="+bookID);
 	}
