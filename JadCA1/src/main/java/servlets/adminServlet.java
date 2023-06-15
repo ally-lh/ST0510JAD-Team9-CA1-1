@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 
 import javax.servlet.RequestDispatcher;
+import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.MultipartConfig;
 import javax.servlet.annotation.WebServlet;
@@ -30,7 +31,7 @@ import com.cloudinary.utils.ObjectUtils;
 @MultipartConfig(
 		location = "/tmp",
 	    fileSizeThreshold = 1024 * 1024, // 1MB
-	    maxFileSize = 1024 * 1024 * 10, // 10MB
+	    maxFileSize = 1024 * 1024 * 10, // 15MB
 	    maxRequestSize = 1024 * 1024 * 50 // 50MB
 	)
 public class adminServlet extends HttpServlet {
@@ -51,12 +52,20 @@ public class adminServlet extends HttpServlet {
 		// TODO Auto-generated method stub
 //		response.getWriter().append("Served at: ").append(request.getContextPath());
 		HttpSession session = request.getSession();
-		//String userRole = (String) session.getAttribute("userRole");
+		//String userRole = (String) session.getAttribute("userRole")s;
 		String userRole = "admin";
 //		if(userRole == null ) {
 //			response.sendRedirect("login.jsp");
 //			return;
 //		}
+		// Get the servlet configuration
+	    ServletConfig servletConfig = getServletConfig();
+
+	    // Retrieve the servlet version
+	    String servletVersion = servletConfig.getServletContext().getMajorVersion() + "." + servletConfig.getServletContext().getMinorVersion();
+
+	    // Print the servlet versions
+	    System.out.println("Servlet version: " + servletVersion);
 		if(userRole.equals("admin")) {
 			RequestDispatcher dispatcher;
 			String pageNumberStr = request.getParameter("pageNumber");
@@ -88,28 +97,30 @@ public class adminServlet extends HttpServlet {
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// TODO Auto-generated method stub
 		HttpSession session = request.getSession();
+		System.out.println("Admin Servlet is called");
 		//String userRole = (String) session.getAttribute("userRole");
 		String userRole = "admin";
 		if(userRole.equals("admin")) {
 			RequestDispatcher dispatcher;
-			String action = request.getParameter("action");
+			String action = getValue(request.getPart("action"));
+			System.out.println(action);
 			if(action!=null) {
 				switch(action) {
 				case "addBook":
 					try {
-						String title = request.getParameter("title");
-						String author = request.getParameter("author");
-						double price = Double.parseDouble(request.getParameter("price"));
-						String publisher = request.getParameter("publisher");
-						String dateString = request.getParameter("pubDate");
+						String title = getValue(request.getPart("title"));
+						String author = getValue(request.getPart("author"));
+						double price = Double.parseDouble(getValue(request.getPart("price")));
+						String publisher = getValue(request.getPart("publisher"));
+						String dateString = getValue(request.getPart("pubDate"));
 						SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
 						java.util.Date utilPubDate = dateFormat.parse(dateString);
 						java.sql.Date pubDate = new java.sql.Date(utilPubDate.getTime());
-						String ISBN = request.getParameter("ISBN");
-						float rating = Float.parseFloat(request.getParameter("rating"));
-						String description = request.getParameter("description");
-						int categoryID = Integer.parseInt(request.getParameter("category"));
-						int quantity = Integer.parseInt(request.getParameter("quantity"));
+						String ISBN = getValue(request.getPart("ISBN"));
+						float rating = Float.parseFloat(getValue(request.getPart("rating")));
+						String description = getValue(request.getPart("description"));
+						int categoryID = Integer.parseInt(getValue(request.getPart("category")));
+						int quantity = Integer.parseInt(getValue(request.getPart("quantity")));
 						Part imagePart = request.getPart("image");
 						InputStream inputStream = imagePart.getInputStream();
 						File tempFile = File.createTempFile("temp", ".jpg");
@@ -125,6 +136,7 @@ public class adminServlet extends HttpServlet {
 						Map<String, Object> uploadResult = cloudinary.uploader().upload(tempFile, ObjectUtils.emptyMap());
 						String imageUrl = (String) uploadResult.get("public_id");
 						tempFile.delete();
+						System.out.println(imageUrl);
 						Book newBook = new Book(title,author,price,publisher,pubDate,ISBN,rating,description,imageUrl,categoryID,quantity); 
 						String message = BookServices.addBook(newBook);
 						request.setAttribute("message", message);
@@ -200,9 +212,23 @@ public class adminServlet extends HttpServlet {
 				    break;
 				}
 			}
+			else {
+				String errorMessage = "Invalid action specified.";
+			    request.setAttribute("message", errorMessage);
+			    doGet(request,response);
+			}
 		}else {
 			response.sendRedirect("login.jsp");
 		}
 	}
 
+	private String getValue(Part part) throws IOException {
+		BufferedReader reader = new BufferedReader(new InputStreamReader(part.getInputStream(), "UTF-8"));
+		StringBuilder value = new StringBuilder();
+		char[] buffer = new char[1024];
+		for (int length = 0; (length = reader.read(buffer)) > 0;) {
+			value.append(buffer, 0, length);
+		}
+		return value.toString();
+	}
 }

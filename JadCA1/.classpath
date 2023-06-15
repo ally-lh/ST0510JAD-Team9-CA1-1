@@ -19,5 +19,7 @@
 	<classpathentry kind="lib" path="src/main/webapp/WEB-INF/lib/httpmime-4.5.14.jar"/>
 	<classpathentry kind="lib" path="src/main/webapp/WEB-INF/lib/cloudinary-core-1.33.0.jar"/>
 	<classpathentry kind="lib" path="src/main/webapp/WEB-INF/lib/httpcore-4.4.16.jar"/>
+	<classpathentry kind="lib" path="C:/Users/23575/Documents/J2EE/Resources/apache-tomee-plus-8.0.10/lib/servlet-api.jar"/>
+	<classpathentry kind="lib" path="src/main/webapp/WEB-INF/lib/commons-fileupload-1.5.jar"/>
 	<classpathentry kind="output" path="build/classes"/>
 </classpath>
