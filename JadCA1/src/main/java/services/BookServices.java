@@ -129,17 +129,67 @@ public class BookServices {
 		return bookData;
 	}
 	
-	public static List<Book> performSearch(String searchTerm){
-		searchTerm = "%"+searchTerm+"%";
+	public static List<Book> performSearch(String searchTerm, String searchCat){
+
+		System.out.print("Searching for book^^");
 		List<Book> searchResults = new ArrayList<>();
+		String jdbcUrl = "jdbc:mysql://jadbookstoredb.cpjd7st4o4nt.us-east-2.rds.amazonaws.com:3306/jadBookStore";
+		String username = "admin";
+		String password = "1392001ksp";
+		String connUrl = "jdbc:mysql://localhost/jadbookstore?user=root&password=Ally@715&serverTimezone=UTC";
 		try {
-			Connection conn = DataBaseConfig.getConnection();
-		    String sqlStr = "select * from Book inner join Category on Category.CategoryID= Book.CategoryID where Book.Title like ? OR Book.Author like ?";
+
+	        Class.forName("com.mysql.jdbc.Driver");  
+
+	        Connection conn = DataBaseConfig.getConnection();
+
+		    String sqlStr;
+			if(!searchTerm.isEmpty() && (searchCat.isEmpty() || searchCat.equals("Category") )) { 
+				searchTerm = "%"+searchTerm+"%";
+				sqlStr = "select * from Book inner join Category on Category.CategoryID= Book.CategoryID where Book.Title like ? OR Book.Author like ? ";
+			} else if(searchTerm.isEmpty() && (!searchCat.isEmpty() && !(searchCat.equals("Category")))) {
+	
+				 sqlStr = "select * from Book inner join Category on Category.CategoryID= Book.CategoryID where Category.CategoryID = ? ";
+			} else if(!searchTerm.isEmpty() && !searchCat.isEmpty()){ 
+				searchTerm = "%"+searchTerm+"%";
+				sqlStr = "select * from Book inner join Category on Category.CategoryID= Book.CategoryID where Book.Title like ? OR Book.Author like ? AND Category.CategoryID = ?  ";
+			} else if(searchTerm.isEmpty() && searchCat.equals("Category")) { 
+				sqlStr = "SELECT * FROM Book INNER JOIN Category on Category.CategoryID=Book.CategoryID";
+			} else { 
+				sqlStr = "";
+			}
+			
 		    PreparedStatement pstmt = conn.prepareStatement(sqlStr);
-		    pstmt.setString(1,searchTerm);
-		    pstmt.setString(2, searchTerm);
-		    
-		    ResultSet rs = pstmt.executeQuery();
+		    Statement statement = conn.createStatement();
+		    ResultSet rs;
+		    if(!searchTerm.isEmpty() && (searchCat.isEmpty() || searchCat.equals("Category") )) { 
+				System.out.print("This");
+		    	pstmt.setString(1,searchTerm);
+				    pstmt.setString(2, searchTerm);
+				    rs = pstmt.executeQuery();
+				    
+			} else if(searchTerm.isEmpty() && (!searchCat.isEmpty() && !(searchCat.equals("Category")))) {
+				System.out.print("1This");
+				pstmt.setString(1,searchCat);
+				 rs = pstmt.executeQuery();
+				    
+			} else if(!searchTerm.isEmpty() && (!searchCat.isEmpty() && !searchCat.equals("Category"))){ 
+				System.out.print("2This");
+				pstmt.setString(1,searchTerm);
+				    pstmt.setString(2, searchTerm);
+				    pstmt.setString(3,searchCat);
+				     rs = pstmt.executeQuery();
+				    
+			} else if(searchTerm.isEmpty() && searchCat.equals("Category")) {
+				System.out.print("3This");
+				System.out.print(sqlStr);
+				rs = statement.executeQuery(sqlStr);
+			} else { 
+				System.out.print("6This");
+				rs = statement.executeQuery(sqlStr);
+			}
+	
+		    System.out.print(rs);
 		    while (rs.next()) {
 	            // Retrieve all the necessary fields from the result set
 	            int bookId = rs.getInt("BookID");
@@ -156,13 +206,16 @@ public class BookServices {
 	            // Create a Book object and set the retrieved values
 	            Book book = new Book(bookId,title,author,price,publisher,pubDate,isbn,rating,description,imageUrl,categoryName);
 	            System.out.println(title);
+	            System.out.println(imageUrl);
 	            // Add the book to the search results list
 	            searchResults.add(book);
 	        }
 		 // Step 6: Close the resources
 	        rs.close();
 	        pstmt.close();
+	        statement.close();
 	        conn.close();
+	        
 
 		} catch(Exception e){
 			e.printStackTrace();

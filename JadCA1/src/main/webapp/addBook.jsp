@@ -7,6 +7,11 @@
 <head>
 <meta charset="UTF-8">
 <title>Add New Book</title>
+<style type="text/css">
+    <%@include file="/css/navbar.css" %>
+    <%@include file="/css/index.css" %>
+    <%@include file="/root/css/bootstrap.min.css" %>
+</style>
 </head>
 <body>
 	<h1>Add New Book</h1>

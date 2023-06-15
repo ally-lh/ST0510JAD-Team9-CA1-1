@@ -3,7 +3,10 @@ package servlets;
 import java.io.IOException;
 import java.util.List;
 import models.Book;
+import models.Category;
 import services.BookServices;
+import services.CategoryServices;
+
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -33,10 +36,12 @@ public class bookSearchServlet extends HttpServlet {
 		// TODO Auto-generated method stub
 //		response.getWriter().append("Served at: ").append(request.getContextPath());
 		String searchTerm = request.getParameter("searchTerm");
-		List<Book> searchResults = BookServices.performSearch(searchTerm); // Implement your search logic here
-
-        request.setAttribute("results", searchResults);
-        RequestDispatcher dispatcher = request.getRequestDispatcher("searchResults.jsp");
+		String searchCat= request.getParameter("categoryID");
+		List<Book> searchResults = BookServices.performSearch(searchTerm,searchCat); // Implement your search logic here
+		List<Category> categoryData = CategoryServices.getAllCategory();
+        request.setAttribute("searchResults", searchResults);
+        request.setAttribute("categoryResults", categoryData);
+        RequestDispatcher dispatcher = request.getRequestDispatcher("home.jsp");
         dispatcher.forward(request, response);
 	}
 

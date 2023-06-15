@@ -1,0 +1,21 @@
+@import url("https://fonts.googleapis.com/css2?family=Barlow:wght@800&family=Merriweather:wght@300&display=swap");
+
+:root {
+  --mainBlue: #596c86;
+  --darkBlue: #42556e;
+  --mainGrey: #3c3c3c;
+  --darGrey: #242424;
+  --wordBlue: #1e2d42;
+}
+
+.bottomNav {
+  background-color: var(--mainGrey);
+}
+.bottomNav a {
+  font-size: 0.8rem;
+  color: white;
+}
+
+.navbar-brand {
+  font-family: "Barlow", sans-serif;
+}

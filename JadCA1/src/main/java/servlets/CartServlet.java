@@ -113,7 +113,7 @@ public class CartServlet extends HttpServlet {
 		try {
 			String message = CartServices.addToCart(new Book(bookID, title, price, imageUrl, quantity), userID,
 					cartList,session);
-			String url =request.getContextPath()+ "/home?action=byID&bookID=" + bookID;
+			String url =request.getContextPath()+ "/bookDetails.jsp?bookID=" + bookID;
 			response.sendRedirect(url);
 		} catch (Exception e) {
 			e.printStackTrace();
