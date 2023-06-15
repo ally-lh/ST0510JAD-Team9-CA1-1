@@ -1,0 +1,57 @@
+.main {
+  background-image: url(./../img/loginbg.jpg);
+  background-position: center;
+  background-size: cover;
+  height: 80vh;
+  width: auto;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.card {
+  width: 30%;
+  margin: 0 auto;
+  height: 50vh;
+  padding: 20px;
+  text-align: center;
+  border-radius: 20px;
+}
+
+.main form {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-evenly;
+  height: 80%;
+  align-items: center;
+}
+
+.bgline {
+  width: 60%;
+  height: 2px;
+  margin: 10px auto 20px auto;
+  background-color: rgba(0, 0, 0, 0.5);
+}
+input {
+  width: 80%;
+  height: 40px;
+  background-color: #f1f1f1;
+  outline: none;
+  border: none;
+  padding: 10px;
+}
+h3 {
+  font-family: "Barlow", sans-serif;
+}
+
+.signUpbtn {
+  background-color: var(--mainBlue) !important;
+  color: white !important;
+  font-family: "Barlow", sans-serif;
+  width: 50%;
+}
+
+.errormsg {
+	color: red;
+
+	}

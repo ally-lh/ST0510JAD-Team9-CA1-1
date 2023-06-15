@@ -1,0 +1,12 @@
+.cartSec {
+  margin-top: 70px;
+  width: auto;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.checkOutSec > * {
+  margin: 10px 10px;
+  font-family: "Barlow", sans-serif;
+}

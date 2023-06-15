@@ -70,6 +70,7 @@ public class userServlet extends HttpServlet {
 		RequestDispatcher dispatcher;
 		try {
 			String action = request.getParameter("action");
+			System.out.println(action);
 			if (action != null) {
 				switch (action) {
 				case "login":
@@ -111,6 +112,12 @@ public class userServlet extends HttpServlet {
 					request.setAttribute("message", message);
 					dispatcher = request.getRequestDispatcher("login.jsp");
 					dispatcher.forward(request, response);
+					break;
+				case "logout":
+					System.out.println("Log out function is called");
+					HttpSession session = request.getSession();
+					session.invalidate();
+					response.sendRedirect(request.getContextPath()+"/index.jsp");
 					break;
 				}
 			}

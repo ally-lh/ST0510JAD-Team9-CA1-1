@@ -1,0 +1,63 @@
+.headLineSection header {
+  background-color: var(--mainBlue);
+  height: 40vh;
+  justify-content: center;
+  align-items: center;
+  display: flex;
+  flex-direction: column;
+  color: var(--wordBlue);
+  font-size: 1.5rem;
+  line-height: 2rem;
+  font-family: Arial, Helvetica, sans-serif;
+  font-weight: bolder;
+}
+.headLineSection header h1 {
+  font-size: 3.5rem;
+  line-height: 3rem;
+  font-family: "Barlow", sans-serif;
+}
+.headerBooks {
+  position: relative;
+  top: -50px;
+}
+.headerBooks button {
+  margin: 0 auto;
+  margin-top: 40px;
+  display: block;
+  background-color: var(--mainBlue);
+  color: white;
+  font-family: "Barlow", sans-serif;
+}
+
+.book {
+  margin: 0 80px;
+}
+
+.book img {
+  height: 40vh;
+  width: auto;
+  margin: 0 auto;
+  border: white 5px solid;
+}
+
+.bookOfMonth {
+  background-color: var(--darGrey);
+  padding: 90px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+
+.bookOfMonth .text {
+  color: white;
+  width: 50%;
+}
+#bookOfMonthTitle {
+  font-size: 3rem;
+  font-weight: lighter;
+}
+.bookOfMonth img {
+  width: auto;
+  height: 50vh;
+  border: white 5px solid;
+}

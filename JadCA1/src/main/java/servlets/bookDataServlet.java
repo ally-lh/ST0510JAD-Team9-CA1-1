@@ -14,7 +14,7 @@ import services.*;
 /**
  * Servlet implementation class bookDataServlet
  */
-@WebServlet("/home")
+@WebServlet("/book")
 public class bookDataServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 

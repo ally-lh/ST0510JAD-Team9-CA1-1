@@ -1,0 +1,80 @@
+.profileTabsSec {
+  height: 80vh;
+  width: auto;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.profileTabsContainer {
+  background-color: #f0f0f0;
+  width: 70%;
+  margin: 0 auto;
+}
+
+.tab-content {
+  justify-content: center;
+  align-items: center;
+  display: flex;
+  flex-direction: column;
+  width: 80vw;
+  height: 60vh;
+}
+
+.nav {
+  background-color: var(--mainBlue);
+  color: white;
+}
+
+.nav-pills .nav-link.active,
+.nav-pills .show > .nav-link {
+  background-color: var(--darkBlue) !important;
+}
+.nav .nav-link {
+  color: white;
+}
+
+.input-group {
+  width: 40vw;
+  margin: 10px 0;
+}
+
+.linebreak {
+  width: 40vw;
+  height: 3px;
+  background-color: #cccccc;
+  margin: 50px 0;
+}
+
+.changePW {
+  width: 200px;
+  background-color: var(--mainBlue);
+  color: white;
+  font-family: "barlow", sans-serif;
+  margin: 0 0 0 auto;
+}
+.logOut {
+  width: 100px;
+  font-family: "Barlow", sans-serif;
+}
+
+.tab-content:nth-child(2) {
+  justify-content: start;
+  padding-top: 40px;
+}
+
+.table {
+  width: 40vw;
+}
+
+th {
+  font-family: "Barlow", sans-serif;
+  color: var(--darkBlue);
+  font-size: 1.2rem;
+}
+.clearBtn {
+  width: 200px;
+  font-family: "barlow", sans-serif;
+  margin: 0 0 0 auto;
+  display: block;
+}
