@@ -63,7 +63,7 @@ public class adminServlet extends HttpServlet {
 			String recordsPerPageStr = request.getParameter("recordPerPage");
 			int pageNumber,recordsPerPage;
 			if(pageNumberStr == null || recordsPerPageStr == null ) {
-				pageNumber = 1;
+				pageNumber = 3;
 				recordsPerPage = 6;
 			}
 			else {
@@ -168,7 +168,7 @@ public class adminServlet extends HttpServlet {
 						dispatcher.forward(request, response);
 					}
 					break;
-				case "deletBook":
+				case "deleteBook":
 					try {
 						int bookID = Integer.parseInt(request.getParameter("bookID"));
 						String imageUrl = request.getParameter("imageUrl");

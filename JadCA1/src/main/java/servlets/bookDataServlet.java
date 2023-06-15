@@ -36,6 +36,7 @@ public class bookDataServlet extends HttpServlet {
 //		response.getWriter().append("Served at: ").append(request.getContextPath());
 		RequestDispatcher dispatcher;
 		String action = request.getParameter("action");
+		System.out.println(action);
 		if(action == null) {
 			return;
 		}
