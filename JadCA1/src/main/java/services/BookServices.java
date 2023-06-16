@@ -133,14 +133,7 @@ public class BookServices {
 
 		System.out.print("Searching for book^^");
 		List<Book> searchResults = new ArrayList<>();
-		String jdbcUrl = "jdbc:mysql://jadbookstoredb.cpjd7st4o4nt.us-east-2.rds.amazonaws.com:3306/jadBookStore";
-		String username = "admin";
-		String password = "1392001ksp";
-		String connUrl = "jdbc:mysql://localhost/jadbookstore?user=root&password=Ally@715&serverTimezone=UTC";
 		try {
-
-	        Class.forName("com.mysql.jdbc.Driver");  
-
 	        Connection conn = DataBaseConfig.getConnection();
 
 		    String sqlStr;

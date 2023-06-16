@@ -1,6 +1,7 @@
 package servlets;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import models.Book;
 import models.Category;
@@ -37,10 +38,14 @@ public class bookSearchServlet extends HttpServlet {
 //		response.getWriter().append("Served at: ").append(request.getContextPath());
 		String searchTerm = request.getParameter("searchTerm");
 		String searchCat= request.getParameter("categoryID");
-		List<Book> searchResults = BookServices.performSearch(searchTerm,searchCat); // Implement your search logic here
+		List<Book> searchResults = new ArrayList<Book>();
+		if(searchTerm!=null || searchCat!=null) {
+			searchResults = BookServices.performSearch(searchTerm,searchCat); // Implement your search logic here
+			
+		}
 		List<Category> categoryData = CategoryServices.getAllCategory();
-        request.setAttribute("searchResults", searchResults);
         request.setAttribute("categoryResults", categoryData);
+        request.setAttribute("searchResults", searchResults);
         RequestDispatcher dispatcher = request.getRequestDispatcher("home.jsp");
         dispatcher.forward(request, response);
 	}

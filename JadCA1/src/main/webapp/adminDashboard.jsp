@@ -85,5 +85,6 @@
 		%>
 	</table>
 	<a href=<%= request.getContextPath()+"/addBook" %>><button>Add New Book</button></a>
+	<a href="<%= request.getContextPath() %>/addUser.jsp"><button>Add User</button></a>
 </body>
 </html>

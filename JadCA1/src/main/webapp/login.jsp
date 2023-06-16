@@ -91,7 +91,8 @@
           <h3>Log In</h3>
           <div class="bgline"></div>
           <div class="errorMsg"><%=error%></div>
-          <form action="user" method="Get">
+          <form action="user" method="post">
+          	<input type="hidden" name="action" value="login">
             <input type="text"  name="UserIdentification" placeholder="Email" />
 
             <input type="password" name="password" placeholder="Password" />
