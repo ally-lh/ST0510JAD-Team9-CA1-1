@@ -38,7 +38,7 @@
 			<td><%=book.getAuthor()%></td>
 			<td><%=book.getCategory()%></td>
 			<td>
-				<form action="updateBook.jsp" method="POST">
+				<form action="updateBook" method="post">
 					<input type="hidden" name="bookID" value="<%=book.getBookID()%>">
 					<input type="submit" value="Update">
 				</form>
@@ -71,11 +71,45 @@
 			<td>
 				<form action="updateCategory.jsp" method="POST">
 					<input type="hidden" name="categoryID" value="<%=category.getCategoryID()%>"> 
+					<input type="hidden" name="categoryName" value="<%=category.getCategoryName()%>">
 					<input type="submit" value="Update">
 				</form>
 				<form action="admin" method="POST">
 					<input type="hidden" name="action" value="deleteCategory"> 
 					<input type="hidden" name="categoryID" value="<%=category.getCategoryID()%>">
+					<input type="submit" value="Delete">
+				</form>
+			</td>
+		</tr>
+		<%
+		}
+		%>
+	</table>
+	<h2>Books</h2>
+	<table>
+		<tr>
+			<th>User name</th>
+			<th>Email</th>
+			<th>Phone Number</th>
+			<th>Role</th>
+		</tr>
+		<%
+		List<User> userData = (List<User>) request.getAttribute("userData");
+		for (User user : userData) {
+		%>
+		<tr>
+			<td><%=user.getUserName()%></td>
+			<td><%=user.getEmail()%></td>
+			<td><%=user.getPhone()%></td>
+			<td><%=user.getRole() %></td>
+			<td>
+				<form action="updateUser" method="GET">
+					<input type="hidden" name="userID" value="<%=user.getUserID()%>">
+					<input type="submit" value="Update">
+				</form>
+				<form action="admin" method="POST">
+					<input type="hidden" name="action" value="deleteUser"> <input
+						type="hidden" name="userID" value="<%=user.getUserID()%>">
 					<input type="submit" value="Delete">
 				</form>
 			</td>

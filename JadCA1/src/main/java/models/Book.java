@@ -38,7 +38,13 @@ public class Book {
 		this(bookID,title,null,price,null,null,null,0,null,imageUrl,null,0,quantity);
 	}
 	
+	public Book(int bookID,String title, String author, double price, String publisher, Date pubDate, String iSBN,
+			float rating, String description, String imageUrl, int categoryID,int quantity) {
+		this(bookID,title,author,price,publisher,pubDate,iSBN,rating,description,imageUrl,null,categoryID,quantity);
+	}
 	
+
+
 	private int bookID;
 	private String title;
 	private String author;

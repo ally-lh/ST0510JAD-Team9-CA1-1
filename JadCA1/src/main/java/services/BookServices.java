@@ -111,10 +111,11 @@ public class BookServices {
 				String description = rs.getString("Description");
 				String imageUrl = rs.getString("Image");
 				String categoryName = rs.getString("CategoryName");
+				int categoryID = rs.getInt("CategoryID");
 				int quantity = rs.getInt("Qty");
 				// Create a Book object and set the retrieved values
 				bookData = new Book(bookId, title, author, price, publisher, pubDate, isbn, rating, description,
-						imageUrl, categoryName,quantity);
+						imageUrl, categoryName,categoryID,quantity);
 				System.out.println(title);
 				// Add the book to the search results list
 			}
@@ -395,7 +396,7 @@ public class BookServices {
 					+ "WHERE BookID = ?";
 	        String updateInventoryQuery = 
 	        		"UPDATE Inventory "
-	        		+ "SET Quantity = ? "
+	        		+ "SET Qty = ? "
 	        		+ "WHERE BookID = ?";
 	        
 	        conn.setAutoCommit(false); // Disable auto-commit

@@ -21,6 +21,7 @@ import java.text.SimpleDateFormat;
 import models.*;
 import services.BookServices;
 import services.CategoryServices;
+import services.UserServices;
 import config.*;
 import com.cloudinary.*;
 import com.cloudinary.utils.ObjectUtils;
@@ -53,23 +54,13 @@ public class adminServlet extends HttpServlet {
 		// TODO Auto-generated method stub
 //		response.getWriter().append("Served at: ").append(request.getContextPath());
 		HttpSession session = request.getSession();
-		// String userRole = (String) session.getAttribute("userRole")s;
-		String userRole = "admin";
-//		if(userRole == null ) {
-//			response.sendRedirect("login.jsp");
-//			return;
-//		}
-		// Get the servlet configuration
-		ServletConfig servletConfig = getServletConfig();
-
-		// Retrieve the servlet version
-		String servletVersion = servletConfig.getServletContext().getMajorVersion() + "."
-				+ servletConfig.getServletContext().getMinorVersion();
-
-		// Print the servlet versions
-		System.out.println("Servlet version: " + servletVersion);
-		if (userRole.equals("admin")) {
-			RequestDispatcher dispatcher;
+		System.out.println(session.getAttribute("role"));
+		if (session.getAttribute("role") == null) {
+			response.sendRedirect("login.jsp");
+			return;
+		}
+		String role = (String) session.getAttribute("role");
+		if (role.equalsIgnoreCase("admin")) {
 			String pageNumberStr = request.getParameter("pageNumber");
 			String recordsPerPageStr = request.getParameter("recordPerPage");
 			int pageNumber, recordsPerPage;
@@ -82,12 +73,14 @@ public class adminServlet extends HttpServlet {
 			}
 			List<Book> bookDataResults = BookServices.fetchBookData(pageNumber, recordsPerPage);
 			List<Category> categoryDataResult = CategoryServices.getAllCategory();
+			List<User> userResult = UserServices.getAllUsers();
 			request.setAttribute("bookResults", bookDataResults);
 			request.setAttribute("categoryResults", categoryDataResult);
-			dispatcher = request.getRequestDispatcher("adminDashboard.jsp");
-			dispatcher.forward(request, response);
+			request.setAttribute("userData", userResult);
+			request.getRequestDispatcher("adminDashboard.jsp").forward(request, response);
 		} else {
 			response.sendRedirect("login.jsp");
+			return;
 		}
 	}
 
@@ -100,11 +93,21 @@ public class adminServlet extends HttpServlet {
 		// TODO Auto-generated method stub
 		HttpSession session = request.getSession();
 		System.out.println("Admin Servlet is called");
-		// String userRole = (String) session.getAttribute("userRole");
-		String userRole = "admin";
-		if (userRole.equals("admin")) {
+		System.out.println(session.getAttribute("role"));
+		if (session.getAttribute("role") == null) {
+			response.sendRedirect("login.jsp");
+			return;
+		}
+		String role = (String) session.getAttribute("role");
+		if (role.equalsIgnoreCase("admin")) {
 			RequestDispatcher dispatcher;
-			String action = getValue(request.getPart("action"));
+			String action = null;
+			String contentType = request.getContentType();
+			if (contentType != null && contentType.startsWith("multipart/form-data")) {
+				action = getValue(request.getPart("action"));
+			} else {
+				action = request.getParameter("action");
+			}
 			System.out.println(action);
 			if (action != null) {
 				switch (action) {
@@ -155,33 +158,53 @@ public class adminServlet extends HttpServlet {
 				}
 				case "updateBook": {
 					try {
-						String title = request.getParameter("title");
-						String author = request.getParameter("author");
-						double price = Double.parseDouble(request.getParameter("price"));
-						String publisher = request.getParameter("publisher");
-						String dateString = request.getParameter("pubDate");
+						int bookID = Integer.parseInt(getValue(request.getPart("bookID")));
+						String title = getValue(request.getPart("title"));
+						String author = getValue(request.getPart("author"));
+						double price = Double.parseDouble(getValue(request.getPart("price")));
+						String publisher = getValue(request.getPart("publisher"));
+						String dateString = getValue(request.getPart("pubDate"));
 						SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-						Date pubDate = (Date) dateFormat.parse(dateString);
-						String ISBN = request.getParameter("ISBN");
-						float rating = Float.parseFloat(request.getParameter("rating"));
-						String description = request.getParameter("description");
-						int categoryID = Integer.parseInt(request.getParameter("category"));
-						int quantity = Integer.parseInt(request.getParameter("quantity"));
-						Part imagePart = request.getPart("image");
-						Cloudinary cloudinary = CloudinaryConfig.getCloudinaryInstance();
-						@SuppressWarnings("unchecked")
-						Map<String, Object> uploadResult = cloudinary.uploader().upload(imagePart.getInputStream(),
-								ObjectUtils.emptyMap());
-						String imageUrl = (String) uploadResult.get("url");
-						Book updateBook = new Book(title, author, price, publisher, pubDate, ISBN, rating, description,
-								imageUrl, categoryID, quantity);
+						java.util.Date utilPubDate = dateFormat.parse(dateString);
+						java.sql.Date pubDate = new java.sql.Date(utilPubDate.getTime());
+						String ISBN = getValue(request.getPart("ISBN"));
+						float rating = Float.parseFloat(getValue(request.getPart("rating")));
+						String description = getValue(request.getPart("description"));
+						int categoryID = Integer.parseInt(getValue(request.getPart("category")));
+						int quantity = Integer.parseInt(getValue(request.getPart("quantity")));
+						String currentImageUrl = getValue(request.getPart("currentImage"));
+						String imageUrl = null;
+						if (request.getPart("newImage") != null) {
+							Part imagePart = request.getPart("newImage");
+							InputStream inputStream = imagePart.getInputStream();
+							File tempFile = File.createTempFile("temp", ".jpg");
+							try (OutputStream outputStream = new FileOutputStream(tempFile)) {
+								byte[] buffer = new byte[4096];
+								int bytesRead;
+								while ((bytesRead = inputStream.read(buffer)) != -1) {
+									outputStream.write(buffer, 0, bytesRead);
+								}
+							}
+							Cloudinary cloudinary = CloudinaryConfig.getCloudinaryInstance();
+							@SuppressWarnings("unchecked")
+							Map<String, Object> uploadResult = cloudinary.uploader().upload(tempFile,
+									ObjectUtils.emptyMap());
+							imageUrl = (String) uploadResult.get("public_id");
+							cloudinary.uploader().destroy(currentImageUrl, ObjectUtils.emptyMap());
+							tempFile.delete();
+						} else {
+							imageUrl = currentImageUrl;
+						}
+
+						Book updateBook = new Book(bookID, title, author, price, publisher, pubDate, ISBN, rating,
+								description, imageUrl, categoryID, quantity);
 						String message = BookServices.updateBook(updateBook);
 						request.setAttribute("message", message);
 						doGet(request, response);
 					} catch (Exception e) {
 						e.printStackTrace();
-						request.setAttribute("message", e);
-						dispatcher = request.getRequestDispatcher("updateBook.jsp");
+						request.setAttribute("message", e.getMessage());
+						dispatcher = request.getRequestDispatcher("updateBook");
 						dispatcher.forward(request, response);
 					}
 					break;
@@ -246,11 +269,99 @@ public class adminServlet extends HttpServlet {
 					doGet(request, response);
 					break;
 				}
-				case "addUser":
+				case "addUser": {
+					String userName = request.getParameter("username");
+					String email = request.getParameter("email");
+					String phoneNum = request.getParameter("phoneNum");
+					String password = request.getParameter("password");
+					String userRole = request.getParameter("isAdmin");
+					if (userName == null || userName.isBlank() || userName.isEmpty()) {
+						request.setAttribute("message", "Invalid UserName");
+						doGet(request, response);
+						break;
+					}
+					if (email == null || email.isBlank() || email.isEmpty()) {
+						request.setAttribute("message", "Invalid email");
+						doGet(request, response);
+						break;
+					}
+					if (password == null || password.isBlank() || password.isEmpty()) {
+						request.setAttribute("message", "Invalid password");
+						doGet(request, response);
+						break;
+					}
+					if (userRole == null || userRole.isBlank() || userRole.isEmpty()) {
+						request.setAttribute("message", "Invalid userRole");
+						doGet(request, response);
+						break;
+					}
+					try {
+						String message = UserServices.addUser(userName, email, phoneNum, userRole, password);
+						request.setAttribute("message", message);
+						doGet(request, response);
+						break;
+					} catch (Exception e) {
+						e.printStackTrace();
+						request.setAttribute("message", e.getMessage());
+						doGet(request, response);
+					}
 					break;
-				case "updateUser":
+				}
+				case "updateUser": {
+					String userIDStr = request.getParameter("userID");
+					String userName = request.getParameter("username");
+					String email = request.getParameter("email");
+					String phoneNum = request.getParameter("phoneNum");
+					String password = request.getParameter("password");
+					String userRole = request.getParameter("isAdmin");
+					int userID=0;
+					try {
+						userID = Integer.parseInt(userIDStr);
+					}catch(Exception e) {
+						e.printStackTrace();
+						request.setAttribute("message", "Invalid userID");
+					}
+					if (userName == null || userName.isBlank() || userName.isEmpty()) {
+						request.setAttribute("message", "Invalid UserName");
+						doGet(request, response);
+					}
+					if (email == null || email.isBlank() || email.isEmpty()) {
+						request.setAttribute("message", "Invalid email");
+						doGet(request, response);
+					}
+					if (password == null || password.isBlank() || password.isEmpty()) {
+						request.setAttribute("message", "Invalid UserName");
+						doGet(request, response);
+					}
+					if (userRole == null || userRole.isBlank() || userRole.isEmpty()) {
+						request.setAttribute("message", "Invalid UserName");
+						doGet(request, response);
+					}
+					try {
+						String message = UserServices.updateUser(userID,userName, email, phoneNum, userRole, password);
+						request.setAttribute("message", message);
+						doGet(request, response);
+					} catch (Exception e) {
+						e.printStackTrace();
+						request.setAttribute("message", e.getMessage());
+						doGet(request, response);
+					}
 					break;
+				}
 				case "deleteUser":
+					String message = null;
+					if (request.getParameter("userID") != null) {
+						try {
+							int userID = Integer.parseInt(request.getParameter("userID"));
+							message = UserServices.deleteUser(userID);
+						} catch (Exception e) {
+							message = e.getMessage();
+						}
+					} else {
+						message = "Invalid user ID";
+					}
+					request.setAttribute("message", message);
+					doGet(request, response);
 					break;
 				default:
 					String errorMessage = "Invalid action specified.";
@@ -263,7 +374,9 @@ public class adminServlet extends HttpServlet {
 				request.setAttribute("message", errorMessage);
 				doGet(request, response);
 			}
-		} else {
+		} else
+
+		{
 			response.sendRedirect("login.jsp");
 		}
 	}

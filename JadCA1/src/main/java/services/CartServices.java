@@ -123,6 +123,7 @@ public class CartServices {
 		Connection conn = null;
 		PreparedStatement orderStatement = null;
 		PreparedStatement itemStatement = null;
+		PreparedStatement deleteCartStatement = null;
 		ResultSet rs = null;
 		String message = "Order added successfully";
 		try {
@@ -165,7 +166,10 @@ public class CartServices {
 					}
 				}
 			}
-
+			String clearCartQuery = "DELETE FROM Cart WHERE CustID = ?";
+			deleteCartStatement = conn.prepareStatement(clearCartQuery);
+			deleteCartStatement.setInt(1, custID);
+			deleteCartStatement.executeUpdate();
 			conn.commit();
 		} catch (BatchUpdateException bue) {
 			System.out.println("Batch Update Error");

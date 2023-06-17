@@ -6,16 +6,15 @@
 <meta charset="UTF-8">
 <title>Insert title here</title>
 </head>
-<%
-    String errorMessage = (String) request.getAttribute("error");
-    if (errorMessage != null) {
-%>
-        <script>
-            alert("<%= errorMessage %>");
+<% if(request.getAttribute("message")!= null){
+		String message = (String)request.getAttribute("message");
+		%>
+		<script>
+            alert('<%= message %>');
         </script>
-<%
-    }
-%><body>
+    <%
+	}
+	%><body>
 	<form action="user" method="POST">
     <label for="username">Username:</label>
     <input type="text" id="username" name="username" required><br><br>

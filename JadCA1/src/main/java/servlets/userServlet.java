@@ -62,6 +62,7 @@ public class userServlet extends HttpServlet {
 				switch (action) {
 				case "login": {
 					System.out.println("Login is called");
+					session.invalidate();
 					String user = request.getParameter("UserIdentification");
 					String password = request.getParameter("password");
 					if (user == null || user.isEmpty() || user.isBlank()) {
@@ -76,9 +77,11 @@ public class userServlet extends HttpServlet {
 						dispatcher.forward(request, response);
 						return;
 					}
-					int custID = UserServices.login(user, password);
-					if (custID > 0) {
-						session.setAttribute("userID", custID);
+					User loginUser = UserServices.login(user, password);
+					if (loginUser != null) {
+						session = request.getSession();
+						session.setAttribute("userID", loginUser.getUserID());
+						session.setAttribute("role", loginUser.getRole());
 						String contextPath = request.getContextPath();
 						response.sendRedirect(contextPath + "/");
 					} else {
@@ -91,31 +94,28 @@ public class userServlet extends HttpServlet {
 				case "register": {
 					String userName = request.getParameter("username");
 					String email = request.getParameter("email");
-					String phoneNumStr = request.getParameter("phoneNum");
+					String phoneNum = request.getParameter("phoneNum");
 					String password = request.getParameter("password");
-					int phoneNum;
 					if (userName == null || userName.isEmpty() || userName.isBlank()) {
-						request.setAttribute("error", "Username is required.");
+						request.setAttribute("message", "Username is required.");
 						dispatcher = request.getRequestDispatcher("register.jsp");
 						dispatcher.forward(request, response);
 						return;
 					}
 					if (email == null || email.isBlank() || email.isEmpty()) {
-						request.setAttribute("error", "email is required.");
+						request.setAttribute("message", "email is required.");
 						dispatcher = request.getRequestDispatcher("register.jsp");
 						dispatcher.forward(request, response);
 						return;
 					}
-					try {
-						phoneNum = Integer.parseInt(phoneNumStr);
-					} catch (NumberFormatException e) {
-						request.setAttribute("error", "Phone number must be a valid number.");
+					if(phoneNum == null || phoneNum.isBlank() || phoneNum.isEmpty()) {
+						request.setAttribute("message", "Phone number must be a valid number.");
 						dispatcher = request.getRequestDispatcher("register.jsp");
 						dispatcher.forward(request, response);
 						return;
 					}
 					if (password == null || password.isBlank() || password.isEmpty()) {
-						request.setAttribute("error", "email is required.");
+						request.setAttribute("message", "email is required.");
 						dispatcher = request.getRequestDispatcher("register.jsp");
 						dispatcher.forward(request, response);
 						return;
@@ -126,7 +126,7 @@ public class userServlet extends HttpServlet {
 						dispatcher = request.getRequestDispatcher("login.jsp");
 						dispatcher.forward(request, response);
 					} catch (Exception e) {
-						request.setAttribute("message", e);
+						request.setAttribute("message", e.getMessage());
 						dispatcher = request.getRequestDispatcher("register.jsp");
 						dispatcher.forward(request, response);
 					}
@@ -135,11 +135,10 @@ public class userServlet extends HttpServlet {
 				case "update": {
 					String userName = request.getParameter("username");
 					String email = request.getParameter("email");
-					String phoneNumStr = request.getParameter("phoneNum");
+					String phoneNum = request.getParameter("phoneNum");
 					String password = request.getParameter("password");
 					if (session.getAttribute("userID") != null) {
 						int custID = (Integer) session.getAttribute("userID");
-						int phoneNum = 0;
 						if (userName == null || userName.isEmpty() || userName.isBlank()) {
 							request.setAttribute("error", "Username is required.");
 							doGet(request,response);
@@ -147,9 +146,7 @@ public class userServlet extends HttpServlet {
 						if (email == null || email.isBlank() || email.isEmpty()) {
 							request.setAttribute("error", "email is required.");
 							doGet(request,response);						}
-						try {
-							phoneNum = Integer.parseInt(phoneNumStr);
-						} catch (NumberFormatException e) {
+						if(phoneNum == null || phoneNum.isBlank() || phoneNum.isEmpty()) {
 							request.setAttribute("error", "Phone number must be a valid number.");
 							doGet(request,response);
 						}
@@ -160,6 +157,7 @@ public class userServlet extends HttpServlet {
 						try {
 							String message = UserServices.updateCustomer(custID, userName, email, phoneNum, password);
 							request.setAttribute("message", message);
+							System.out.println(message);
 							doGet(request,response);
 						} catch (Exception e) {
 							request.setAttribute("message", e.getMessage());

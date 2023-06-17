@@ -14,12 +14,14 @@
         <input type="text" id="username" name="username" required><br>
         <label for="email">Email:</label><br>
         <input type="email" id="email" name="email" required><br>
+        <label for="phoneNum">Phone:</label>
+    	<input type="tel" id="phoneNum" name="phoneNum"><br><br>
         <label for="password">Password:</label><br>
         <input type="password" id="password" name="password" required><br>
         <label>Role:</label><br>
-        <input type="radio" id="admin" name="isAdmin" value="true">
+        <input type="radio" id="admin" name="isAdmin" value="admin" >
         <label for="admin">Admin</label><br>
-        <input type="radio" id="customer" name="isAdmin" value="false">
+        <input type="radio" id="customer" name="isAdmin" value="customer" checked>
         <label for="customer">Customer</label><br>
         <input type="submit" value="Add User">
     </form>
