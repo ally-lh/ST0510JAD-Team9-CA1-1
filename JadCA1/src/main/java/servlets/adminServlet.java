@@ -317,6 +317,9 @@ public class adminServlet extends HttpServlet {
 					int userID=0;
 					try {
 						userID = Integer.parseInt(userIDStr);
+						System.out.println(userIDStr);
+						System.out.println(userID);
+						System.out.println(phoneNum);
 					}catch(Exception e) {
 						e.printStackTrace();
 						request.setAttribute("message", "Invalid userID");

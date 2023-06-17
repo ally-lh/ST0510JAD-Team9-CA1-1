@@ -35,6 +35,8 @@ if(session.getAttribute("role")!= null){
   <input type="text" id="username" name="username" value="<%= user.getUserName() %>" required><br>
   <label for="email">Email:</label><br>
   <input type="email" id="email" name="email" value="<%= user.getEmail() %>" required><br>
+  <label for="phoneNum">Phone:</label><br>
+  <input type="tel" id="phoneNum" name="phoneNum"><br>
   <label for="password">Password:</label><br>
   <input type="text" id="password" name="password" value="<%= user.getPassword() %>" required><br>
   <label>Role:</label><br>

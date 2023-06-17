@@ -18,10 +18,6 @@ public class User {
 		this(null,null,null,null,userID,role);
 	}
 	
-	public User(String userName,String email,String password,String phone, String role) {
-		this(userName,email,password,phone,0,role);
-	}
-	
 	private String userName;
 	private String email;
 	private String password;

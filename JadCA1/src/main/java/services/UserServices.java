@@ -176,7 +176,7 @@ public class UserServices {
 				String password = rs.getString("Password");
 				String phoneNum = rs.getString("Phone");
 				String role = rs.getString("Role");
-				user = new User(userName,email,password,phoneNum,role);
+				user = new User(userName,email,password,phoneNum,userID,role);
 			}
 			rs.close();
 			pstmt.close();
@@ -234,6 +234,7 @@ public class UserServices {
 			pstmt.setString(4, password);
 			pstmt.setString(5,role);
 			pstmt.setInt(6, userID);
+			System.out.println(pstmt);
 			int rowAffected = pstmt.executeUpdate();
 			if (rowAffected > 0) {
 				message = "User Details updated successfully.";
