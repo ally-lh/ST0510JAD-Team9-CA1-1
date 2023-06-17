@@ -5,7 +5,14 @@
 <head>
 <meta charset="UTF-8">
 <title>Insert title here</title>
+<style type="text/css">
+    <%@include file="/css/navbar.css" %>
+    <%@include file="/css/signup.css" %>
+    <%@include file="/root/css/bootstrap.min.css" %>
+</style>
+<script type="text/javascript" src="<%=request.getContextPath()%>/root/js/bootstrap.min.js"></script>
 </head>
+
 <% if(request.getAttribute("message")!= null){
 		String message = (String)request.getAttribute("message");
 		%>
@@ -15,23 +22,28 @@
     <%
 	}
 	%><body>
-	<form action="user" method="POST">
-    <label for="username">Username:</label>
-    <input type="text" id="username" name="username" required><br><br>
-
-    <label for="email">Email:</label>
-    <input type="email" id="email" name="email" required><br><br>
-    
-    <label for="phoneNum">Phone:</label>
-    <input type="tel" id="phoneNum" name="phoneNum" required><br><br>
-
-    <label for="password">Password:</label>
-    <input type="password" id="password" name="password" required><br><br>
-
-    <label for="confirm-password">Confirm Password:</label>
-    <input type="password" id="confirm-password" name="confirm-password" required><br><br>
-
-    <input type="submit" name ="action" value="register">
-  </form>
+	<%@ include file="header.jsp" %>
+		<div class="main">
+      <div class="container">
+        <div class="card">
+          <h3>Sign Up</h3>
+          <div class="bgline"></div>
+          <form action="user" method="POST">
+            <input type="text" name="username" placeholder="Username" required/>
+            <input type="text" name="email" placeholder="Email" required/>
+            <input type="text" name="phoneNum" placeholder="Phone" required/>
+            <input type="password" name="password" placeholder="Password" required />
+            <input
+              type="password"
+              name="confirm-password"
+              placeholder="Confirm Password" required
+            />
+            <button type="submit" class="btn signUpbtn" name ="action">Sign Up</button>
+          </form>
+          <a href="/JadCA1/login.jsp" class="forgotPassword">Already have an Account?</a>
+        </div>
+      </div>
+    </div>
+<%@include file="footer.jsp"%>
 </body>
 </html>

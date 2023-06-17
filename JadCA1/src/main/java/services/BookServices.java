@@ -23,11 +23,14 @@ public class BookServices {
 
 	        // Calculate the offset based on the page number and records per page
 	        int offset = (pageNumber - 1) * recordsPerPage;
-
+	        System.out.print("offset" + offset);
+	        System.out.print("pageNumber" + pageNumber);
+	        System.out.print("recordsPerPage" + recordsPerPage);
 	        // Create the SQL query with pagination
 	        String fetchAllBookDataQuery = 
 	        		"SELECT * FROM Book "
 	        		+ "INNER JOIN Category ON Category.CategoryID = Book.CategoryID "
+	        		+ "INNER JOIN Inventory ON Inventory.BookID = Book.BookID "
 	        		+ "LIMIT ? "
 	        		+ "OFFSET ?";
 	        PreparedStatement pstmt = conn.prepareStatement(fetchAllBookDataQuery);
@@ -47,10 +50,10 @@ public class BookServices {
 	            String description = rs.getString("Description");
 	            String imageUrl = rs.getString("Image");
 	            String categoryName = rs.getString("CategoryName");
-
+	            int quantity = rs.getInt("Qty");
 	            // Create a Book object and set the retrieved values
 	            Book book = new Book(bookId, title, author, price, publisher, pubDate, isbn, rating, description,
-	                    imageUrl, categoryName);
+	                    imageUrl, categoryName,quantity);
 	            System.out.println(title);
 
 	            // Add the book to the search results list
@@ -66,7 +69,7 @@ public class BookServices {
 	    }
 	    return bookData;
 	}
-
+	
 	public static int fetchBookNumbers() {
 		int bookNum= 0;
 		try {

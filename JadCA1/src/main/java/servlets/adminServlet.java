@@ -62,18 +62,26 @@ public class adminServlet extends HttpServlet {
 		String role = (String) session.getAttribute("role");
 		if (role.equalsIgnoreCase("admin")) {
 			String pageNumberStr = request.getParameter("pageNumber");
-			String recordsPerPageStr = request.getParameter("recordPerPage");
-			int pageNumber, recordsPerPage;
-			if (pageNumberStr == null || recordsPerPageStr == null) {
-				pageNumber = 3;
-				recordsPerPage = 6;
-			} else {
-				pageNumber = Integer.parseInt(pageNumberStr);
-				recordsPerPage = Integer.parseInt(recordsPerPageStr);
-			}
+			System.out.print(pageNumberStr);
+			String recordsPerPageStr = request.getParameter("recordsPerPage");
+			
+			if (pageNumberStr == null) {
+	            pageNumberStr = "1";
+	            System.out.println("pageNumber is null");
+	        }
+	        if (recordsPerPageStr == null) {
+	            recordsPerPageStr = "6";
+	            System.out.println("records per page is null");
+	        }
+	        int pageNumber = Integer.parseInt(pageNumberStr);
+	        int recordsPerPage = Integer.parseInt(recordsPerPageStr);
+	        System.out.println(pageNumber);
+	        System.out.println(recordsPerPage);
 			List<Book> bookDataResults = BookServices.fetchBookData(pageNumber, recordsPerPage);
 			List<Category> categoryDataResult = CategoryServices.getAllCategory();
 			List<User> userResult = UserServices.getAllUsers();
+			int bookAmount = BookServices.fetchBookNumbers();
+			request.setAttribute("recordsPerPageStr", bookAmount);
 			request.setAttribute("bookResults", bookDataResults);
 			request.setAttribute("categoryResults", categoryDataResult);
 			request.setAttribute("userData", userResult);

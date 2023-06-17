@@ -14,6 +14,9 @@ import java.sql.Statement;
 
 import config.DataBaseConfig;
 import models.Book;
+import models.*;
+import java.util.*;
+import java.sql.Date;
 
 public class CartServices {
 	public static String addToCart(Book buyItem, int custID, List<Book> bookList, HttpSession session) {
@@ -51,9 +54,63 @@ public class CartServices {
 		}
 		return message;
 	}
-
-	public static void deleteCart(int bookID) {
-
+	
+	public static List<Order> getOrders(int custID){
+		List<Order> orderList = new ArrayList<Order>();
+		try {
+			Connection conn = DataBaseConfig.getConnection();
+			String getOrderQuery = "SELECT Book.ISBN,"
+					+ "Book.Title,"
+					+ "Orders.OrderDate,"
+					+ "OrderItem.Quantity "
+					+ "FROM Orders "
+					+ "INNER JOIN OrderItem "
+					+ "ON Orders.OrderID = OrderItem.OrderID "
+					+ "INNER JOIN Book "
+					+ "ON Book.BookID = OrderItem.BookID "
+					+ "WHERE Orders.CustID =?";
+			PreparedStatement pstmt = conn.prepareStatement(getOrderQuery);
+			pstmt.setInt(1, custID);
+			ResultSet rs = pstmt.executeQuery();
+			while (rs.next()) {
+				String isbn = rs.getString("ISBN");
+				String title = rs.getString("Title");
+				Date orderDate = rs.getDate("OrderDate");
+				int quantity = rs.getInt("Quantity");
+				Order order = new Order(isbn,title,quantity,orderDate);
+				System.out.print(order);
+				orderList.add(order);
+			}
+			rs.close();
+			pstmt.close();
+			conn.close();
+		}catch(Exception e) {
+			e.printStackTrace();
+		}
+		return orderList;
+	}
+	
+	public static String clearOrders(int custID) {
+		String message = "";
+		try {
+			Connection conn = DataBaseConfig.getConnection();
+			String clearOrderQuery = "DELETE FROM Orders WHERE CustID = ?";
+			PreparedStatement pstmt = conn.prepareStatement(clearOrderQuery);
+			pstmt.setInt(1, custID);
+			int rowAffected = pstmt.executeUpdate();
+			if(rowAffected > 0) {
+				message = "Orders clear successfully";
+			}
+			else {
+				message = "Fail to clear the orders";
+			}
+			pstmt.close();
+			conn.close();
+		}catch(Exception e) {
+			e.printStackTrace();
+			message = "Error during clearing orders";
+		}
+		return message;
 	}
 
 	public static String deleteCartItem(int custID, int bookID, List<Book> bookList, HttpSession session) {

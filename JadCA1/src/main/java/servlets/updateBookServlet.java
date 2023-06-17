@@ -35,6 +35,26 @@ public class updateBookServlet extends HttpServlet {
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// TODO Auto-generated method stub
 		//response.getWriter().append("Served at: ").append(request.getContextPath());
+//		if(request.getParameter("bookID")!=null) {
+//			System.out.println("updateBookServlet is called");
+//			int bookID = Integer.parseInt(request.getParameter("bookID"));
+//			Book book = BookServices.fetchBookDataByID(bookID);
+//			List<Category> categoryData = CategoryServices.getAllCategory();
+//			request.setAttribute("categoryResults", categoryData);
+//			request.setAttribute("bookResult", book);
+//			request.getRequestDispatcher("updateBook.jsp").forward(request, response);
+//			return;
+//		}else {
+//			request.getRequestDispatcher("admin").forward(request, response);
+//		}
+	}
+
+	/**
+	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
+	 */
+	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		// TODO Auto-generated method stub
+//		doGet(request, response);
 		if(request.getParameter("bookID")!=null) {
 			System.out.println("updateBookServlet is called");
 			int bookID = Integer.parseInt(request.getParameter("bookID"));
@@ -43,17 +63,10 @@ public class updateBookServlet extends HttpServlet {
 			request.setAttribute("categoryResults", categoryData);
 			request.setAttribute("bookResult", book);
 			request.getRequestDispatcher("updateBook.jsp").forward(request, response);
+			return;
 		}else {
 			request.getRequestDispatcher("admin").forward(request, response);
 		}
-	}
-
-	/**
-	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
-	 */
-	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		// TODO Auto-generated method stub
-		doGet(request, response);
 	}
 
 }

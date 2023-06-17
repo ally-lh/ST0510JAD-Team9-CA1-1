@@ -43,9 +43,5 @@
         </div>
       </div>
     </div>
-    <footer class="text-center bg-dark text-white p-4">
-      Copyright @ JAD-Bookstore
-    </footer>
-
 </body>
 </html>

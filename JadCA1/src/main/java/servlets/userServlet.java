@@ -37,11 +37,14 @@ public class userServlet extends HttpServlet {
 		// response.getWriter().append("Served at: ").append(request.getContextPath());
 		HttpSession session = request.getSession();
 		if (session.getAttribute("userID") != null) {
+	
 			int custID = (Integer) session.getAttribute("userID");
+			System.out.print(custID);
 			User customerDetails = UserServices.getCustomerDetails(custID);
+			System.out.print("hell");
 			System.out.println(customerDetails);
 			request.setAttribute("customerDetails", customerDetails);
-			request.getRequestDispatcher("updateCustomer.jsp").forward(request, response);
+			request.getRequestDispatcher("profile.jsp").forward(request, response);
 		} else {
 			request.getRequestDispatcher("login.jsp").forward(request, response);
 		}

@@ -1,15 +1,51 @@
-.manageBookTable {
-  margin-top: 30px;
+.ManageAdmin {
+  min-height: 80vh;
   width: auto;
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  /* justify-content: center; */
+  margin-top: 10vh;
+  margin-bottom: 20vh;
 }
 
-.manageBookTable .container {
+.ManageAdminContainer {
+  background-color: #f0f0f0;
+  width: 70%;
+  margin: 0 auto;
+}
+
+.tab-content {
+  display: flex;
+  flex-direction: column;
+  width: 80vw;
+  min-height: 40vh;
+  padding: 30px;
+}
+
+.nav {
+  background-color: var(--mainBlue);
+  color: white;
+}
+
+.nav-pills .nav-link.active,
+.nav-pills .show > .nav-link {
+  background-color: var(--darkBlue) !important;
+}
+.nav .nav-link {
+  color: white;
+}
+
+.manageBookTable,
+.manageCategory {
+  width: auto;
+  display: flex;
+  flex-direction: column;
+}
+
+.manageBookTable .container,
+.manageCategory .container {
   border: 1px solid #cccccc;
   border-radius: 20px;
-  padding: 30px;
 }
 
 .addBookBtn {
@@ -21,7 +57,6 @@
 
 .deleteBooks {
   width: 200px;
-
   font-family: "barlow", sans-serif;
   margin: 0 10px;
   margin: 0 10px;
@@ -29,6 +64,6 @@
 
 h1 {
   font-family: "Barlow", sans-serif;
-  margin: 30px auto;
+  margin: 0px auto 30px auto;
   color: var(--mainBlue);
 }
