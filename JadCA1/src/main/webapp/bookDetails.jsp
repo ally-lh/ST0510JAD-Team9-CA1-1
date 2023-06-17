@@ -65,6 +65,7 @@
     </div>
     <div class="priceBar container d-flex justify-content-end">
       <div id="price">$<%=book.getPrice() %></div>
+
       <form action="Cart" method="post">
       	<input type="hidden" name="action" value="addToCart">
 		<input type="hidden" name="bookID" value="<%= book.getBookID() %>">
@@ -90,5 +91,6 @@
 	<%
 	}
 	%>
+<%@include file="footer.jsp"%>
 </body>
 </html>

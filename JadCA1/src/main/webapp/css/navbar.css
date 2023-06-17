@@ -10,6 +10,9 @@
 
 .bottomNav {
   background-color: var(--mainGrey);
+  display: flex;
+  flex-direction: column; 
+  justify-content: center;
 }
 .bottomNav a {
   font-size: 0.8rem;

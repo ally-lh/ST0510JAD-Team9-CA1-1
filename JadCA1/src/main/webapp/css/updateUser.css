@@ -1,0 +1,19 @@
+.form {
+  display: flex;
+  justify-content: center;
+  align-content: center;
+
+  padding: 100px;
+}
+
+.form .container {
+  border: 1px solid #cccccc;
+  border-radius: 20px;
+  padding: 50px;
+}
+
+h1 {
+  font-family: "Barlow", sans-serif;
+  margin: 0px auto 30px auto;
+  color: var(--mainBlue);
+}

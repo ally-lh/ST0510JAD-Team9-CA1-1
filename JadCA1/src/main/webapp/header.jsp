@@ -5,10 +5,15 @@
 </style>
 <%
 	boolean loggedIn = false;
+boolean adminIN = false;
 	try { 
 		int custID = (int) request.getSession().getAttribute("userID");
 		if (custID != 0){ 
 			loggedIn = true;
+		}
+		String role = (String) request.getSession().getAttribute("role");
+		if (role.equals("admin")){ 
+			adminIN = true;
 		}
 	} catch (Exception e){ 
 		
@@ -29,16 +34,19 @@
 				  <ul class="navbar-nav">
           <li class="nav-item"><a class="nav-link" aria-current="page"
 						href="/JadCA1/search">Search</a></li>
-						 <li class="nav-item">
+						<%if(!adminIN){ 
+							%> <li class="nav-item">
+						
               <a class="nav-link" aria-current="page" href="/JadCA1/Cart">Cart</a>
             </li>
-            <% if (loggedIn){ 
+            <% } if (loggedIn){ 
+            	if(!adminIN){
             	%>
             	<li class="nav-item">
-              <a class="nav-link" href="/JadCA1/profile.jsp">Profile</a>
+              <a class="nav-link" href="/JadCA1/user">Profile</a>
             </li>
             
-            	<% 
+            	<% }
             } else { 
             	%>
             	   <li class="nav-item">
@@ -55,6 +63,11 @@
 		<ul class="navbar-nav container d-flex justify-content-end">
 		<%
 		if(loggedIn){ 
+			if(adminIN){ 
+				%>
+				<li class="nav-item"><a class="nav-link smallNavText"
+					aria-current="page" href="/JadCA1/admin">Admin</a></li><% 
+			}
 			%>
 			<li class="nav-item"><form action="user" method="post"
 					class="nav-link smallNavText" aria-current="page">

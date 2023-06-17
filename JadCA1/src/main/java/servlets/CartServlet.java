@@ -37,7 +37,7 @@ public class CartServlet extends HttpServlet {
 		// TODO Auto-generated method stub
 		// response.getWriter().append("Served at: ").append(request.getContextPath());
 		HttpSession session = request.getSession();
-		
+
 		if (session.getAttribute("userID") != null) {
 			List<Book> cart = new ArrayList<Book>();
 			if (session.getAttribute("Cart") != null) {
@@ -71,6 +71,10 @@ public class CartServlet extends HttpServlet {
 			if (action != null) {
 				switch (action) {
 				case "addToCart": {
+					if(session.getAttribute("role").equals("admin")) {
+                        response.sendRedirect("index.jsp");
+                        return;
+					}
 					String bookIDStr = request.getParameter("bookID");
 					String title = request.getParameter("title");
 					String imageUrl = request.getParameter("imageUrl");
@@ -186,6 +190,25 @@ public class CartServlet extends HttpServlet {
 						
 						response.sendRedirect("login.jsp");
 					break;
+				} case "clearOrder" : { 
+			
+					
+							try {
+								String message = CartServices.clearOrders(userID);
+								System.out.print(message);
+								request.setAttribute("message", message);
+								request.getRequestDispatcher("/user").forward(request, response);
+
+							} catch (Exception e) {
+								System.out.print(e);
+								request.setAttribute("message", e);
+								doGet(request, response);
+							}
+				
+					
+					break;
+			
+				
 				}
 				}
 			} else {

@@ -73,6 +73,7 @@ public class UserServices {
 		User customer = null;
 		try {
 			Connection conn = DataBaseConfig.getConnection();
+			System.out.print("a");
 			String fetchUserDetailsQuery = "SELECT Username,"
 					+ " Email, "
 					+ "Phone, "
@@ -81,15 +82,21 @@ public class UserServices {
 					+ "WHERE UserID = ? "
 					+ "AND Role = ?";
 			PreparedStatement pstmt = conn.prepareStatement(fetchUserDetailsQuery);
+			System.out.print("a");
+			System.out.print(custID);
 			pstmt.setInt(1, custID);
 			pstmt.setString(2, "customer");
 			ResultSet rs = pstmt.executeQuery();
+			System.out.print("b");
+			System.out.print(rs);
 			while(rs.next()) {
 				String userName = rs.getString("UserName");
 				String email = rs.getString("Email");
 				String phoneNum = rs.getString("Phone");
 				String password = rs.getString("Password");
 				customer = new User(userName,email,password,phoneNum);
+				System.out.print("212");
+				System.out.print(customer);
 			}
 			rs.close();
 			pstmt.close();
