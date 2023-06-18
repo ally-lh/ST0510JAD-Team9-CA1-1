@@ -102,9 +102,9 @@
 			} 
 %>
 </div>
-<% if(totalItems >0){int pageSize = 6; // Number of books to display per page
+<% if(totalItems >0 && totalItems > 6){int pageSize = 6; // Number of books to display per page
 		   String bookPageNumber = request.getParameter("bookPageNumber");
-		   int totalBookPages = (int) Math.ceil((double)(totalItems + pageSize - 1) / pageSize);    
+		   int totalBookPages = (int) Math.ceil((double)totalItems/ pageSize);
 		   int currentBookPage = (bookPageNumber != null) ? Integer.parseInt(bookPageNumber) : 1;
 		
 		   //Calculate start and end pages for pagination

@@ -382,7 +382,7 @@ String navLinkClassPaneBooks = (userPageNumber != null) ? "" : "show active";
 
     <div class="mb-3">
         <label for="phoneNum" class="form-label">Phone:</label>
-        <input type="number" id="phoneNum" name="phoneNum" pattern="^\d{10}$" class="form-control">
+        <input type="number" id="phoneNum" name="phoneNum"pattern="^\d{10}$" title ="phone must be 10 digits." class="form-control">
     </div>
 
     <div class="mb-3">

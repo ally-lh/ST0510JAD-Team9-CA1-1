@@ -100,6 +100,7 @@ public class userServlet extends HttpServlet {
 					break;
 				}
 				case "register": {
+					String confirmPW = request.getParameter("confirm-password");
 					String userName = request.getParameter("username");
 					String email = request.getParameter("email");
 					String phoneNum = request.getParameter("phoneNum");
@@ -127,6 +128,11 @@ public class userServlet extends HttpServlet {
 						dispatcher = request.getRequestDispatcher("register.jsp");
 						dispatcher.forward(request, response);
 						return;
+					}
+					if (!password.equals(confirmPW)) { 
+						request.setAttribute("message", "Passwords do not match.");
+						dispatcher = request.getRequestDispatcher("register.jsp");
+						dispatcher.forward(request, response);
 					}
 					try {
 						String message = UserServices.addCustomer(userName, email, phoneNum, password);
@@ -188,7 +194,10 @@ public class userServlet extends HttpServlet {
 					break;
 				}
 			}
-			}
+			}else {
+                request.setAttribute("message", "Invalid action");
+                request.getRequestDispatcher("index.jsp").forward(request, response);
+            }
 
 		} catch (Exception e) {
 			request.setAttribute("error", "Internal server error.");
