@@ -3,7 +3,7 @@
   display: flex;
   justify-content: center;
   align-content: center;
-  height: 5vh;
+  height: 6vh;
   border-radius: 5px;
 }
 .filterText {
@@ -14,6 +14,7 @@
   padding: 5px;
 }
 
+
 .searchBarSec {
   height: 45vh;
   justify-content: center;
@@ -23,8 +24,10 @@
   background-color: var(--mainBlue);
 }
 .book {
-  display: flex;
-  margin-bottom: 50px;
+    height: 40vh;
+    width: 80%;
+    margin: 10px auto;
+    display: flex;
 }
 .bookRes {
   width: 80%;
@@ -34,6 +37,8 @@
 
 .details {
   padding-left: 30px;
+  flex-wrap: wrap;
+  width: 100%;
 }
 .numOfresults {
   width: 80%;
@@ -43,25 +48,30 @@
   font-family: "Barlow", sans-serif;
 }
 #title {
-  padding: 10px 0;
-  font-size: 2rem;
+  padding:  7px 0;
+  font-size: 1.5rem;
   font-weight: bold;
   color: #42556e;
 }
 
 #rating {
-  padding: 10px 0;
+  padding: 7px 0;
   font-style: italic;
-  font-size: 1.5rem;
+  font-size: 1.2rem;
 }
 
 #author {
-  padding: 10px 0;
-  font-size: 1.5rem;
+  padding: 7px 0;
+  font-size: 1.2rem;
 }
 
 #description {
-  font-size: 1rem;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3; /* Adjust the number of lines to display */
+  max-height: 6em; /* Adjust the height as needed */
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .bookRes img {
@@ -74,12 +84,9 @@ select {
   border: none !important;
   border-left: 6px solid var(--mainBlue) !important;
   border-radius: 0px !important;
+  height: 6vh !important;
 }
 
-select:nth-of-type(2) {
-  border-top-right-radius: 10px !important;
-  border-bottom-right-radius: 10px !important;
-}
 input[type="search"] {
   background-color: transparent;
   border-bottom: white 2px;
@@ -120,4 +127,17 @@ input[type="search"]::placeholder {
 	flex-direction: column;
 	justify-content: center;
 	align-content:center;
+	min-height: 80vh;
 }
+
+.results a { 
+	height: 100px;
+	
+}
+
+.box {
+	padding: 40px;
+	margin-bottom: 10px;
+	height: 100%;
+}
+

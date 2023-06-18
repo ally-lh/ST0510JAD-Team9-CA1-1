@@ -54,21 +54,14 @@ public class CartServices {
 		}
 		return message;
 	}
-	
-	public static List<Order> getOrders(int custID){
+
+	public static List<Order> getOrders(int custID) {
 		List<Order> orderList = new ArrayList<Order>();
 		try {
 			Connection conn = DataBaseConfig.getConnection();
-			String getOrderQuery = "SELECT Book.ISBN,"
-					+ "Book.Title,"
-					+ "Orders.OrderDate,"
-					+ "OrderItem.Quantity "
-					+ "FROM Orders "
-					+ "INNER JOIN OrderItem "
-					+ "ON Orders.OrderID = OrderItem.OrderID "
-					+ "INNER JOIN Book "
-					+ "ON Book.BookID = OrderItem.BookID "
-					+ "WHERE Orders.CustID =?";
+			String getOrderQuery = "SELECT Book.ISBN," + "Book.Title," + "Orders.OrderDate," + "OrderItem.Quantity "
+					+ "FROM Orders " + "INNER JOIN OrderItem " + "ON Orders.OrderID = OrderItem.OrderID "
+					+ "INNER JOIN Book " + "ON Book.BookID = OrderItem.BookID " + "WHERE Orders.CustID =?";
 			PreparedStatement pstmt = conn.prepareStatement(getOrderQuery);
 			pstmt.setInt(1, custID);
 			ResultSet rs = pstmt.executeQuery();
@@ -77,19 +70,19 @@ public class CartServices {
 				String title = rs.getString("Title");
 				Date orderDate = rs.getDate("OrderDate");
 				int quantity = rs.getInt("Quantity");
-				Order order = new Order(isbn,title,quantity,orderDate);
+				Order order = new Order(isbn, title, quantity, orderDate);
 				System.out.print(order);
 				orderList.add(order);
 			}
 			rs.close();
 			pstmt.close();
 			conn.close();
-		}catch(Exception e) {
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		return orderList;
 	}
-	
+
 	public static String clearOrders(int custID) {
 		String message = "";
 		try {
@@ -98,15 +91,14 @@ public class CartServices {
 			PreparedStatement pstmt = conn.prepareStatement(clearOrderQuery);
 			pstmt.setInt(1, custID);
 			int rowAffected = pstmt.executeUpdate();
-			if(rowAffected > 0) {
+			if (rowAffected > 0) {
 				message = "Orders clear successfully";
-			}
-			else {
+			} else {
 				message = "Fail to clear the orders";
 			}
 			pstmt.close();
 			conn.close();
-		}catch(Exception e) {
+		} catch (Exception e) {
 			e.printStackTrace();
 			message = "Error during clearing orders";
 		}
@@ -164,7 +156,7 @@ public class CartServices {
 				String imageUrl = rs.getString("Image");
 				int qty = rs.getInt("Qty");
 				bookList.add(new Book(bookID, title, price, imageUrl, qty));
-				
+
 			}
 			// Step 6: Close the resources
 			rs.close();
@@ -227,6 +219,13 @@ public class CartServices {
 			deleteCartStatement = conn.prepareStatement(clearCartQuery);
 			deleteCartStatement.setInt(1, custID);
 			deleteCartStatement.executeUpdate();
+			String updateInventoryQuery = "UPDATE Inventory " + "SET Qty = Qty-? " + "WHERE BookID = ?";
+			PreparedStatement inventoryStmt = conn.prepareStatement(updateInventoryQuery);
+			for (Book book : cart) {
+				inventoryStmt.setInt(1, book.getQuantity());
+				inventoryStmt.setInt(2, book.getBookID());
+				inventoryStmt.executeUpdate();
+			}
 			conn.commit();
 		} catch (BatchUpdateException bue) {
 			System.out.println("Batch Update Error");

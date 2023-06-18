@@ -7,7 +7,11 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
-import java.util.List;
+
+import javax.servlet.http.HttpSession;
+
+import java.util.*;
+import org.apache.commons.lang3.tuple.Pair;
 
 import models.Book;
 import config.*;
@@ -31,8 +35,9 @@ public class BookServices {
 	        		"SELECT * FROM Book "
 	        		+ "INNER JOIN Category ON Category.CategoryID = Book.CategoryID "
 	        		+ "INNER JOIN Inventory ON Inventory.BookID = Book.BookID "
+	        		+ "ORDER BY Book.BookID "
 	        		+ "LIMIT ? "
-	        		+ "OFFSET ?";
+	        		+ "OFFSET ? ";
 	        PreparedStatement pstmt = conn.prepareStatement(fetchAllBookDataQuery);
 	        pstmt.setInt(1, recordsPerPage);
 	        pstmt.setInt(2, offset);
@@ -133,25 +138,28 @@ public class BookServices {
 		return bookData;
 	}
 	
-	public static List<Book> performSearch(String searchTerm, String searchCat){
+	public static Pair<List<Book>, Integer> performSearch(String searchTerm, String searchCat,int pageNumber){
 
 		System.out.print("Searching for book^^");
 		List<Book> searchResults = new ArrayList<>();
+		int totalItems = 0;
+		int pageSize =6;
+		int offset = (pageNumber - 1) * pageSize;
 		try {
 	        Connection conn = DataBaseConfig.getConnection();
 
 		    String sqlStr;
 			if(!searchTerm.isEmpty() && (searchCat.isEmpty() || searchCat.equals("Category") )) { 
 				searchTerm = "%"+searchTerm+"%";
-				sqlStr = "select * from Book inner join Category on Category.CategoryID= Book.CategoryID where Book.Title like ? OR Book.Author like ? ";
+				sqlStr = "select * from Book inner join Category on Category.CategoryID= Book.CategoryID where Book.Title like ? OR Book.Author like ? LIMIT ? OFFSET ?";
 			} else if(searchTerm.isEmpty() && (!searchCat.isEmpty() && !(searchCat.equals("Category")))) {
 	
-				 sqlStr = "select * from Book inner join Category on Category.CategoryID= Book.CategoryID where Category.CategoryID = ? ";
+				 sqlStr = "select * from Book inner join Category on Category.CategoryID= Book.CategoryID where Category.CategoryID = ? LIMIT ? OFFSET ?";
 			} else if(!searchTerm.isEmpty() && !searchCat.isEmpty()){ 
 				searchTerm = "%"+searchTerm+"%";
-				sqlStr = "select * from Book inner join Category on Category.CategoryID= Book.CategoryID where Book.Title like ? OR Book.Author like ? AND Category.CategoryID = ?  ";
+				sqlStr = "select * from Book inner join Category on Category.CategoryID= Book.CategoryID where Book.Title like ? OR Book.Author like ? AND Category.CategoryID = ? LIMIT ? OFFSET ?";
 			} else if(searchTerm.isEmpty() && searchCat.equals("Category")) { 
-				sqlStr = "SELECT * FROM Book INNER JOIN Category on Category.CategoryID=Book.CategoryID";
+				sqlStr = "SELECT * FROM Book INNER JOIN Category on Category.CategoryID=Book.CategoryID LIMIT ? OFFSET ?";
 			} else { 
 				sqlStr = "";
 			}
@@ -163,11 +171,15 @@ public class BookServices {
 				System.out.print("This");
 		    	pstmt.setString(1,searchTerm);
 				    pstmt.setString(2, searchTerm);
+				    pstmt.setInt(3, pageSize);
+				    pstmt.setInt(4, offset);
 				    rs = pstmt.executeQuery();
 				    
 			} else if(searchTerm.isEmpty() && (!searchCat.isEmpty() && !(searchCat.equals("Category")))) {
 				System.out.print("1This");
 				pstmt.setString(1,searchCat);
+				pstmt.setInt(2, pageSize);
+			    pstmt.setInt(3, offset);
 				 rs = pstmt.executeQuery();
 				    
 			} else if(!searchTerm.isEmpty() && (!searchCat.isEmpty() && !searchCat.equals("Category"))){ 
@@ -175,12 +187,16 @@ public class BookServices {
 				pstmt.setString(1,searchTerm);
 				    pstmt.setString(2, searchTerm);
 				    pstmt.setString(3,searchCat);
+				    pstmt.setInt(4, pageSize);
+				    pstmt.setInt(5,offset);
 				     rs = pstmt.executeQuery();
 				    
 			} else if(searchTerm.isEmpty() && searchCat.equals("Category")) {
 				System.out.print("3This");
 				System.out.print(sqlStr);
-				rs = statement.executeQuery(sqlStr);
+				pstmt.setInt(1, pageSize);
+				pstmt.setInt(2, offset);
+				rs = pstmt.executeQuery();
 			} else { 
 				System.out.print("6This");
 				rs = statement.executeQuery(sqlStr);
@@ -207,9 +223,48 @@ public class BookServices {
 	            // Add the book to the search results list
 	            searchResults.add(book);
 	        }
+		    String countQuery = sqlStr.substring(0, sqlStr.indexOf("LIMIT")).replace("*", "COUNT(*)");
+		    PreparedStatement countStmt = conn.prepareStatement(countQuery);
+		    Statement countsmt = conn.createStatement();
+		    ResultSet rsCount;
+		    if(!searchTerm.isEmpty() && (searchCat.isEmpty() || searchCat.equals("Category") )) { 
+				System.out.print("This");
+				countStmt.setString(1,searchTerm);
+				countStmt.setString(2, searchTerm);
+				rsCount = pstmt.executeQuery();
+				    
+			} else if(searchTerm.isEmpty() && (!searchCat.isEmpty() && !(searchCat.equals("Category")))) {
+				System.out.print("1This");
+				countStmt.setString(1,searchCat);
+				rsCount = pstmt.executeQuery();
+				    
+			} else if(!searchTerm.isEmpty() && (!searchCat.isEmpty() && !searchCat.equals("Category"))){ 
+				System.out.print("2This");
+				countStmt.setString(1,searchTerm);
+				countStmt.setString(2, searchTerm);
+				countStmt.setString(3,searchCat);
+				rsCount = pstmt.executeQuery();
+				    
+			} else if(searchTerm.isEmpty() && searchCat.equals("Category")) {
+				System.out.print("3This");
+				System.out.print(sqlStr);
+				rsCount = pstmt.executeQuery();
+			} else { 
+				System.out.print("6This");
+				rsCount = statement.executeQuery(sqlStr);
+			}
+		    rsCount = countStmt.executeQuery();
+		    if(rsCount.next()) {
+			    totalItems = rsCount.getInt(1);
+			    
+			    
+		    }
 		 // Step 6: Close the resources
 	        rs.close();
+	        rsCount.close();
 	        pstmt.close();
+	        countsmt.close();
+	        countStmt.close();
 	        statement.close();
 	        conn.close();
 	        
@@ -217,67 +272,8 @@ public class BookServices {
 		} catch(Exception e){
 			e.printStackTrace();
 		}
-		return searchResults;
+		return Pair.of(searchResults, totalItems);
 		
-	}
-
-	public static List<Book> getBooksByCategory(List<Integer> categoryIDs) {
-		List<Book> bookData = new ArrayList<>();
-		try {
-
-			Connection conn = DataBaseConfig.getConnection();
-			StringBuilder queryBuilder = new StringBuilder();
-			queryBuilder.append(
-					"SELECT * FROM Book "
-					+ "INNER JOIN Category ON Category.CategoryID = Book.CategoryID "
-					+ "WHERE Book.CategoryID IN (");
-			for (int i = 0; i < categoryIDs.size(); i++) {
-			    queryBuilder.append("?");
-			    if (i < categoryIDs.size() - 1) {
-			        queryBuilder.append(",");
-			    }
-			}
-			queryBuilder.append(")");
-
-			String fetchBooksByCategoryQuery = queryBuilder.toString();
-			System.out.println(fetchBooksByCategoryQuery);
-			PreparedStatement pstmt = conn.prepareStatement(fetchBooksByCategoryQuery);
-			for (int i = 0; i < categoryIDs.size(); i++) {
-			    pstmt.setInt(i + 1, categoryIDs.get(i));
-			}
-			System.out.print(pstmt);
-
-			ResultSet rs = pstmt.executeQuery();
-			System.out.print(rs);
-			while (rs.next()) {
-				// Retrieve all the necessary fields from the result set
-				int bookId = rs.getInt("BookID");
-				String title = rs.getString("Title");
-				double price = rs.getDouble("Price");
-				String author = rs.getString("Author");
-				String publisher = rs.getString("Publisher");
-				Date pubDate = rs.getDate("PubDate");
-				String isbn = rs.getString("ISBN");
-				float rating = rs.getFloat("Rating");
-				String description = rs.getString("Description");
-				String imageUrl = rs.getString("Image");
-				String categoryName = rs.getString("CategoryName");
-				// Create a Book object and set the retrieved values
-				Book book = new Book(bookId, title, author, price, publisher, pubDate, isbn, rating, description,
-						imageUrl, categoryName);
-				System.out.println(title);
-				// Add the book to the search results list
-				bookData.add(book);
-			}
-			// Step 6: Close the resources
-			rs.close();
-			pstmt.close();
-			conn.close();
-
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		return bookData;
 	}
 	
 	public static String addBook(Book newBook) {
@@ -373,7 +369,12 @@ public class BookServices {
 	        else {
 	        	message= "Failed to delete the book";
 	        }
-		}catch (Exception e) {
+		}catch (java.sql.SQLIntegrityConstraintViolationException e) {
+            // handle exception here, for example:
+            e.printStackTrace();
+            message = "cannot delete book that are still on orders";
+        }
+		catch (Exception e) {
 	        e.printStackTrace();
 	        message = "Error occurred while deleting the book.";
 	    }
@@ -442,5 +443,66 @@ public class BookServices {
 	        message = "Error occurred while updating the book and inventory.";
 	    }
 	    return message;
+	}
+	
+	public static Book getBookOfTheMonth() {
+		Book book = null;
+		try {
+			Connection conn = DataBaseConfig.getConnection();
+			Statement stmt = conn.createStatement();
+			String getBookOfTheMonthQuery = "SELECT * FROM Book INNER JOIN Category ON Category.CategoryID = Book.CategoryID ORDER BY Rating DESC, BookID asc LIMIT 1; ";
+			ResultSet rs = stmt.executeQuery(getBookOfTheMonthQuery);
+			while(rs.next()) {
+				int bookId = rs.getInt("BookID");
+	            String title = rs.getString("Title");
+	            double price = rs.getDouble("Price");
+	            String author = rs.getString("Author");
+	            String publisher = rs.getString("Publisher");
+	            Date pubDate = rs.getDate("PubDate");
+	            String isbn = rs.getString("ISBN");
+	            float rating = rs.getFloat("Rating");
+	            String description = rs.getString("Description");
+	            String imageUrl = rs.getString("Image");
+	            String categoryName = rs.getString("CategoryName");
+	            book = new Book(bookId, title, author, price, publisher, pubDate, isbn, rating, description,
+	                    imageUrl, categoryName);
+	 
+			}
+		}catch (Exception e){
+			e.printStackTrace();
+		}
+		return book;
+	}
+	
+	public static Boolean checkInventory(int custID,List<Book> bookList,HttpSession session){
+		Boolean isInStock = true;
+		try {
+			Connection conn = DataBaseConfig.getConnection();
+	            String sql = "SELECT Qty FROM Inventory WHERE BookID = ?";
+	            
+	            ResultSet rs = null ;
+	            PreparedStatement pstmt = conn.prepareStatement(sql);
+
+	            for (int i = 0; i < bookList.size(); i++) {
+	                pstmt.setInt(i + 1, bookList.get(i).getBookID());
+	                rs = pstmt.executeQuery();
+	                while (rs.next()) {
+	                	System.out.println(rs.getInt(1));
+	                	System.out.println(bookList.get(i).getBookID());
+		                if(rs.getInt("Qty") < bookList.get(i).getQuantity()) {
+		                isInStock=false;
+		                CartServices.deleteCartItem(custID, bookList.get(i).getBookID(), bookList, session);
+		                }
+		            }
+	            }
+	            if(rs != null) {
+	            	rs.close();
+	            }
+	            pstmt.close();
+	            conn.close();
+		}catch(Exception e) {
+			e.printStackTrace();
+		}
+		return isInStock;
 	}
 }

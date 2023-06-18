@@ -102,12 +102,11 @@ public class CategoryServices {
 			} else {
 				message = "Fail to delete Category";
 			}
-		}
-		catch (java.sql.SQLIntegrityConstraintViolationException e) {
-		    // handle exception here, for example:
-		    e.printStackTrace();
-		    message = "cannot delete category that have books";
-		}catch (Exception e) {
+		} catch (java.sql.SQLIntegrityConstraintViolationException e) {
+            // handle exception here, for example:
+            e.printStackTrace();
+            message = "cannot delete category that have books";
+        }catch (Exception e) {
 			e.printStackTrace();
 			message = "Error in deleting Category";
 		}

@@ -1,6 +1,8 @@
 package servlets;
 
 import java.io.IOException;
+
+import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -10,6 +12,7 @@ import javax.servlet.http.HttpSession;
 
 import java.util.*;
 import models.Book;
+import services.BookServices;
 import services.CartServices;
 
 /**
@@ -42,8 +45,7 @@ public class CartServlet extends HttpServlet {
 			List<Book> cart = new ArrayList<Book>();
 			if (session.getAttribute("Cart") != null) {
 				cart = (List<Book>) session.getAttribute("Cart");
-			}
-			else {
+			} else {
 				cart = CartServices.getCartItems((Integer) session.getAttribute("userID"));
 				session.setAttribute("Cart", cart);
 			}
@@ -71,9 +73,9 @@ public class CartServlet extends HttpServlet {
 			if (action != null) {
 				switch (action) {
 				case "addToCart": {
-					if(session.getAttribute("role").equals("admin")) {
-                        response.sendRedirect("index.jsp");
-                        return;
+					if (session.getAttribute("role").equals("admin")) {
+						response.sendRedirect("index.jsp");
+						return;
 					}
 					String bookIDStr = request.getParameter("bookID");
 					String title = request.getParameter("title");
@@ -91,7 +93,7 @@ public class CartServlet extends HttpServlet {
 							|| qtyStr == null || qtyStr.isBlank() || qtyStr.isEmpty()) {
 						System.out.println("Invalid book details.");
 						request.setAttribute("message", "Invalid book details");
-						request.getRequestDispatcher("/").forward(request, response);
+						request.getRequestDispatcher("index.jsp").forward(request, response);
 						return;
 					}
 
@@ -103,7 +105,7 @@ public class CartServlet extends HttpServlet {
 					} catch (NumberFormatException n) {
 						System.out.println(n);
 						request.setAttribute("message", "invalid BookID");
-						request.getRequestDispatcher(request.getContextPath() + "/home?action=byID&bookID=" + bookID)
+						request.getRequestDispatcher("index.jsp")
 								.forward(request, response);
 						return;
 					}
@@ -112,7 +114,7 @@ public class CartServlet extends HttpServlet {
 					} catch (NumberFormatException n) {
 						System.out.println(n);
 						request.setAttribute("message", "invalid price");
-						request.getRequestDispatcher(request.getContextPath() + "/home?action=byID&bookID=" + bookID)
+						request.getRequestDispatcher("index.jsp")
 								.forward(request, response);
 						return;
 					}
@@ -122,7 +124,7 @@ public class CartServlet extends HttpServlet {
 					} catch (NumberFormatException n) {
 						System.out.println(n);
 						request.setAttribute("message", "invalid quantity");
-						request.getRequestDispatcher(request.getContextPath() + "/home?action=byID&bookID=" + bookID)
+						request.getRequestDispatcher("index.jsp")
 								.forward(request, response);
 						return;
 					}
@@ -172,11 +174,17 @@ public class CartServlet extends HttpServlet {
 						List<Book> cartList = (List<Book>) session.getAttribute("Cart");
 						if (cartList.size() > 0) {
 							try {
-								String message = CartServices.addOrder(userID, cartList, session);
-								System.out.print(message);
-								request.setAttribute("message", message);
-								request.getRequestDispatcher("index.jsp").forward(request, response);
-
+								Boolean isInStock = BookServices.checkInventory(userID,cartList,session);
+								if (isInStock) {
+									String message = CartServices.addOrder(userID, cartList, session);
+									System.out.print(message);
+									request.setAttribute("message", message);
+									request.getRequestDispatcher("index.jsp").forward(request, response);
+									break;
+								} else {
+									request.setAttribute("message", "some books in your cart is no stock. Please");
+									doGet(request,response);
+								}
 							} catch (Exception e) {
 								System.out.print(e);
 								request.setAttribute("message", e);
@@ -187,28 +195,27 @@ public class CartServlet extends HttpServlet {
 							doGet(request, response);
 						}
 					} else
-						
+
 						response.sendRedirect("login.jsp");
 					break;
-				} case "clearOrder" : { 
-			
-					
-							try {
-								String message = CartServices.clearOrders(userID);
-								System.out.print(message);
-								request.setAttribute("message", message);
-								request.getRequestDispatcher("/user").forward(request, response);
+				}
+				case "clearOrder": {
 
-							} catch (Exception e) {
-								System.out.print(e);
-								request.setAttribute("message", e);
-								doGet(request, response);
-							}
-				
-					
+					try {
+						String message = CartServices.clearOrders(userID);
+						System.out.print(message);
+						request.setAttribute("message", message);
+						request.getRequestDispatcher("user").forward(request, response);
+
+					} catch (Exception e) {
+						System.out.print(e);
+						request.setAttribute("message", e.getMessage());
+						RequestDispatcher dispatcher = request.getRequestDispatcher("user");
+						dispatcher.forward(request, response);
+					}
+
 					break;
-			
-				
+
 				}
 				}
 			} else {

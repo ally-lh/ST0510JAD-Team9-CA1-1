@@ -17,14 +17,25 @@
 <% 
 int categoryID = 0;
 String categoryName = null;
-if(request.getParameter("categoryID")!= null && request.getParameter("categoryName")!=null){
-	categoryID = Integer.parseInt(request.getParameter("categoryID"));
-	categoryName = request.getParameter("categoryName");
+if(session.getAttribute("role")!=null){
+	if(((String) session.getAttribute("role")).equalsIgnoreCase("admin")){
+		
+		if(request.getParameter("categoryID")!= null && request.getParameter("categoryName")!=null){
+			categoryID = Integer.parseInt(request.getParameter("categoryID"));
+			categoryName = request.getParameter("categoryName");
+		}
+		else {
+			request.getRequestDispatcher("admin").forward(request,response);
+			return;
+		}
+	}else{
+		response.sendRedirect("login.jsp");
+	}
+}else{
+	response.sendRedirect("login.jsp");
 }
-else {
-	request.getRequestDispatcher("admin").forward(request,response);
-	return;
-}
+
+
 %>
 	<%@ include file="header.jsp" %>
 <div class="form">

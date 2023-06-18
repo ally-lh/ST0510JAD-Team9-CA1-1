@@ -21,8 +21,13 @@
         <script>
             alert("<%= message %>");
         </script>
-<%
-    }
+<%} %>
+<% 
+String userPageNumber = (String) request.getParameter("userPageNumber");
+String navLinkClassID = (userPageNumber != null)  ? "active" : "";
+String navLinkClassPane = (userPageNumber != null) ? "show active" : "";
+String navLinkClassIDBooks = (userPageNumber != null)  ? "" : "active";
+String navLinkClassPaneBooks = (userPageNumber != null) ? "" : "show active";
 %>
 </head>
 <body>
@@ -39,7 +44,7 @@
             aria-orientation="vertical"
           >
             <button
-              class="nav-link active"
+              class="nav-link <%=navLinkClassIDBooks%>"
               id="v-pills-books-tab"
               data-bs-toggle="pill"
               data-bs-target="#v-pills-books"
@@ -63,7 +68,7 @@
               Manage Categories
             </button>
             <button
-              class="nav-link"
+              class="nav-link <%=navLinkClassID%>"
               id="v-pills-user-tab"
               data-bs-toggle="pill"
               data-bs-target="#v-pills-user"
@@ -79,7 +84,7 @@
           <div class="tab-content" id="v-pills-tabContent">
             <!-- personal Details tab content -->
             <div
-              class="tab-pane fade show active PD"
+              class="tab-pane fade <%=navLinkClassPaneBooks%> PD"
               id="v-pills-books"
               role="tabpanel"
               aria-labelledby="v-pills-books-tab"
@@ -140,25 +145,47 @@
 		%>
             </tbody>
           </table>
-          <%int pageSize = 6; // Number of books to display per page
-        int bookAmount = (int) request.getAttribute("recordsPerPageStr");
-        int totalPages = (int) Math.ceil((double) bookAmount / pageSize);
-        String pageNumber = request.getParameter("page");
-       
-        int currentPage = (pageNumber != null) ? Integer.parseInt(pageNumber) : 1;
-        %>
+		          <% int pageSize = 6; // Number of books to display per page
+		   int bookAmount = (int) request.getAttribute("bookAmount");
+		   int totalBookPages = (int) Math.ceil((double) bookAmount / pageSize);
+		   String bookPageNumber = request.getParameter("bookPageNumber");
+		       
+		   int currentBookPage = (bookPageNumber != null) ? Integer.parseInt(bookPageNumber) : 1;
+		
+		   //Calculate start and end pages for pagination
+		   int startBookPage = Math.max(1, currentBookPage - 2);
+		   int endBookPage = Math.min(totalBookPages, startBookPage + 4); // +4 because we want to show 5 pages
+		   startBookPage = Math.max(1, endBookPage - 4); // recalculate in case endPage is lower than startPage + 4
+		
+		%>
 		<nav aria-label="Page navigation example">
-  <ul class="pagination justify-content-center">
-<% for (int i = 1; i <= totalPages; i++) {
-        // Add the active class to the current page
-        String activeClass = (i == currentPage) ? "active" : "";
-    %>
-    <li class="page-item"><a class="page-link" href="?pageNumber=<%=i%>" class="<%=activeClass%>"><%=i%></a></li>
- <%
-    }
-    %>
-  </ul>
-</nav>
+		  <ul class="pagination justify-content-center">
+		    <% if (currentBookPage > 1) { %>
+		        <li class="page-item"><a class="page-link" href="?bookPageNumber=1" class=""><<</a></li>
+		        <li class="page-item"><a class="page-link" href="?bookPageNumber=<%=currentBookPage-1%>" class=""><</a></li>
+		        <% if (startBookPage > 1) { %> 
+		            <li class="page-item"><span class="page-link">...</span></li> 
+		        <% } %>
+		    <% }
+		    
+		    for (int i = startBookPage; i <= endBookPage; i++) {
+		        // Add the active class to the current page
+		        String activeClass = (i == currentBookPage) ? "active" : "";
+		    %>
+		        <li class="page-item <%=activeClass%>"><a class="page-link" href="?bookPageNumber=<%=i%>" class=""><%=i%></a></li>
+		    <%
+		    }
+		    
+		    if (currentBookPage < totalBookPages) {
+		        if (endBookPage < totalBookPages) { %> 
+		            <li class="page-item"><span class="page-link">...</span></li> 
+		        <% } %>
+		        <li class="page-item"><a class="page-link" href="?bookPageNumber=<%=currentBookPage+1%>" class="">></a></li>
+		        <li class="page-item"><a class="page-link" href="?bookPageNumber=<%=totalBookPages%>" class="">>></a></li>
+		    <% } %>	
+		  </ul>
+		</nav>
+
               </div>
             </div>
             <div
@@ -215,7 +242,7 @@
               </div>
             </div>
             <div
-              class="tab-pane fade"
+              class="tab-pane fade <%=navLinkClassPane%>"
               id="v-pills-user"
               role="tabpanel"
               aria-labelledby="v-pills-user-tab"
@@ -267,6 +294,47 @@
 		%>
                     </tbody>
                   </table>
+					                  <% 
+					   int userAmount = (int) request.getAttribute("userAmount");
+					   int totalPages = (int) Math.ceil((double) userAmount / 6);
+					   userPageNumber = request.getParameter("userPageNumber");
+					       
+					   int currentPage = (userPageNumber != null) ? Integer.parseInt(userPageNumber) : 1;
+					
+					   //Calculate start and end pages for pagination
+					   int startPage = Math.max(1, currentPage - 2);
+					   int endPage = Math.min(totalPages, startPage + 4); // +4 because we want to show 5 pages
+					   startPage = Math.max(1, endPage - 4); // recalculate in case endPage is lower than startPage + 4
+					
+					%>
+					<nav aria-label="Page navigation example">
+					  <ul class="pagination justify-content-center">
+					    <% if (currentPage > 1) { %>
+					        <li class="page-item"><a class="page-link" href="?userPageNumber=1" class=""><<</a></li>
+					        <li class="page-item"><a class="page-link" href="?userPageNumber=<%=currentPage-1%>" class=""><</a></li>
+					        <% if (startPage > 1) { %> 
+					            <li class="page-item"><span class="page-link">...</span></li> 
+					        <% } %>
+					    <% }
+					    
+					    for (int i = startPage; i <= endPage; i++) {
+					        // Add the active class to the current page
+					        String activeClass = (i == currentPage) ? "active" : "";
+					    %>
+					        <li class="page-item <%=activeClass%>"><a class="page-link" href="?userPageNumber=<%=i%>" class=""><%=i%></a></li>
+					    <%
+					    }
+					    
+					    if (currentPage < totalPages) {
+					        if (endPage < totalPages) { %> 
+					            <li class="page-item"><span class="page-link">...</span></li> 
+					        <% } %>
+					        <li class="page-item"><a class="page-link" href="?userPageNumber=<%=currentPage+1%>" class="">></a></li>
+					        <li class="page-item"><a class="page-link" href="?userPageNumber=<%=totalPages%>" class="">>></a></li>
+					    <% } %>   
+					  </ul>
+					</nav>
+                  
                 </div>
               </div>
             </div>
@@ -314,7 +382,7 @@
 
     <div class="mb-3">
         <label for="phoneNum" class="form-label">Phone:</label>
-        <input type="tel" id="phoneNum" name="phoneNum" class="form-control">
+        <input type="number" id="phoneNum" name="phoneNum" pattern="^\d{10}$" class="form-control">
     </div>
 
     <div class="mb-3">
@@ -381,7 +449,7 @@
 
     <div class="mb-3">
         <label for="price" class="form-label">Price:</label>
-        <input type="number" name="price" step="0.01" class="form-control" required>
+        <input type="number" name="price" step="0.01" min="0.01" class="form-control" required>
     </div>
 
     <div class="mb-3">
@@ -396,12 +464,12 @@
 
     <div class="mb-3">
         <label for="ISBN" class="form-label">ISBN:</label>
-        <input type="text" name="ISBN" class="form-control" required>
+        <input type="text" name="ISBN" class="form-control" pattern="^\d{13}$" title="ISBN must be 13 digits"required>
     </div>
 
     <div class="mb-3">
         <label for="rating" class="form-label">Rating:</label>
-        <input type="number" name="rating" step="0.1" class="form-control" required>
+        <input type="number" name="rating" step="0.1" min="0" max="5" class="form-control" required>
     </div>
 
     <div class="mb-3">

@@ -58,7 +58,7 @@ public class UserServices {
 			if (rs.next()) {
 				int custID = rs.getInt("UserID");
 				String role = rs.getString("role");
-				loginUser= new User(custID,role);
+				loginUser = new User(custID, role);
 			}
 			rs.close();
 			pstmt.close();
@@ -69,18 +69,13 @@ public class UserServices {
 		return loginUser;
 	}
 
-	public static User getCustomerDetails (int custID) {
+	public static User getCustomerDetails(int custID) {
 		User customer = null;
 		try {
 			Connection conn = DataBaseConfig.getConnection();
 			System.out.print("a");
-			String fetchUserDetailsQuery = "SELECT Username,"
-					+ " Email, "
-					+ "Phone, "
-					+ "Password "
-					+ "FROM User "
-					+ "WHERE UserID = ? "
-					+ "AND Role = ?";
+			String fetchUserDetailsQuery = "SELECT Username," + " Email, " + "Phone, " + "Password " + "FROM User "
+					+ "WHERE UserID = ? " + "AND Role = ?";
 			PreparedStatement pstmt = conn.prepareStatement(fetchUserDetailsQuery);
 			System.out.print("a");
 			System.out.print(custID);
@@ -89,24 +84,25 @@ public class UserServices {
 			ResultSet rs = pstmt.executeQuery();
 			System.out.print("b");
 			System.out.print(rs);
-			while(rs.next()) {
+			while (rs.next()) {
 				String userName = rs.getString("UserName");
 				String email = rs.getString("Email");
 				String phoneNum = rs.getString("Phone");
 				String password = rs.getString("Password");
-				customer = new User(userName,email,password,phoneNum);
+				customer = new User(userName, email, password, phoneNum);
 				System.out.print("212");
 				System.out.print(customer);
 			}
 			rs.close();
 			pstmt.close();
 			conn.close();
-		}catch (Exception e) {
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		return customer;
-		
+
 	}
+
 	public static String updateCustomer(int custID, String userName, String email, String phoneNum, String password)
 			throws Exception {
 		String message = "";
@@ -119,7 +115,7 @@ public class UserServices {
 			pstmt.setString(3, phoneNum);
 			pstmt.setString(4, password);
 			pstmt.setInt(5, custID);
-			pstmt.setString(6,"customer");
+			pstmt.setString(6, "customer");
 			int rowAffected = pstmt.executeUpdate();
 			if (rowAffected > 0) {
 				message = "Customer Details updated successfully.";
@@ -143,32 +139,54 @@ public class UserServices {
 		}
 		return message;
 	}
-	
-	public static List<User> getAllUsers(){
+
+	public static List<User> getAllUsers(int pageNumber) {
 		List<User> userList = new ArrayList<User>();
-		try{
+		try {
 			Connection conn = DataBaseConfig.getConnection();
-			String fetchAllUsers = "SELECT * FROM User";
-			Statement stmt= conn.createStatement();
-			ResultSet rs = stmt.executeQuery(fetchAllUsers);
-			while(rs.next()) {
+			String fetchAllUsers = "SELECT * FROM User ORDER BY Role ASC,UserID ASC LIMIT ? OFFSET ?";
+			PreparedStatement pstmt = conn.prepareStatement(fetchAllUsers);
+			int offset = (pageNumber - 1) * 6;
+			pstmt.setInt(1, 6);
+			pstmt.setInt(2, offset);
+			ResultSet rs = pstmt.executeQuery();
+			while (rs.next()) {
 				int userID = rs.getInt("UserID");
 				String userName = rs.getString("Username");
 				String email = rs.getString("Email");
 				String password = rs.getString("Password");
 				String phoneNum = rs.getString("Phone");
 				String role = rs.getString("Role");
-				userList.add(new User(userName,email,password,phoneNum,userID,role));
+				userList.add(new User(userName, email, password, phoneNum, userID, role));
 			}
 			rs.close();
-			stmt.close();
+			pstmt.close();
 			conn.close();
-		}catch(Exception e) {
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		return userList;
 	}
-	
+
+	public static int getTotalUserCount() {
+		int count = 0;
+		try {
+			Connection conn = DataBaseConfig.getConnection();
+			String countQuery = "SELECT COUNT(*) FROM User";
+			PreparedStatement pstmt = conn.prepareStatement(countQuery);
+			ResultSet rs = pstmt.executeQuery();
+			if (rs.next()) {
+				count = rs.getInt(1);
+			}
+			rs.close();
+			pstmt.close();
+			conn.close();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return count;
+	}
+
 	public static User getUserByID(int userID) {
 		User user = null;
 		try {
@@ -177,24 +195,25 @@ public class UserServices {
 			PreparedStatement pstmt = conn.prepareStatement(fetchUserByID);
 			pstmt.setInt(1, userID);
 			ResultSet rs = pstmt.executeQuery();
-			while(rs.next()) {
+			while (rs.next()) {
 				String userName = rs.getString("Username");
 				String email = rs.getString("Email");
 				String password = rs.getString("Password");
 				String phoneNum = rs.getString("Phone");
 				String role = rs.getString("Role");
-				user = new User(userName,email,password,phoneNum,userID,role);
+				user = new User(userName, email, password, phoneNum, userID, role);
 			}
 			rs.close();
 			pstmt.close();
 			conn.close();
-		}catch(Exception e){
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		return user;
 	}
-	
-	public static String addUser(String userName, String email, String phoneNum,String role, String password) throws Exception {
+
+	public static String addUser(String userName, String email, String phoneNum, String role, String password)
+			throws Exception {
 		String message = "";
 		try {
 			Connection conn = DataBaseConfig.getConnection();
@@ -227,9 +246,9 @@ public class UserServices {
 		}
 		return message;
 	}
-	
-	public static String updateUser(int userID, String userName, String email, String phoneNum,String role, String password)
-			throws Exception {
+
+	public static String updateUser(int userID, String userName, String email, String phoneNum, String role,
+			String password) throws Exception {
 		String message = "";
 		try {
 			Connection conn = DataBaseConfig.getConnection();
@@ -239,7 +258,7 @@ public class UserServices {
 			pstmt.setString(2, email);
 			pstmt.setString(3, phoneNum);
 			pstmt.setString(4, password);
-			pstmt.setString(5,role);
+			pstmt.setString(5, role);
 			pstmt.setInt(6, userID);
 			System.out.println(pstmt);
 			int rowAffected = pstmt.executeUpdate();
@@ -265,8 +284,8 @@ public class UserServices {
 		}
 		return message;
 	}
-	
-	public static String deleteUser(int userID)throws Exception {
+
+	public static String deleteUser(int userID) throws Exception {
 		String message = "";
 		try {
 			Connection conn = DataBaseConfig.getConnection();
@@ -274,15 +293,15 @@ public class UserServices {
 			PreparedStatement pstmt = conn.prepareStatement(deleteUserQuery);
 			pstmt.setInt(1, userID);
 			int rowsAffected = pstmt.executeUpdate();
-			if(rowsAffected > 0 ) {
+			if (rowsAffected > 0) {
 				message = "User deleted successfully";
-			}else {
+			} else {
 				message = "Fail to delete user";
 			}
-		}catch (Exception e) {
+		} catch (Exception e) {
 			e.printStackTrace();
 			message = "Error during deleting user";
-			throw new Exception (message);
+			throw new Exception(message);
 		}
 		return message;
 	}

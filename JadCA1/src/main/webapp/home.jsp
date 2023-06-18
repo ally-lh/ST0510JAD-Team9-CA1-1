@@ -14,10 +14,23 @@
 <body>
 	<%@ page import="java.util.List"%>
 	<%@ page import="models.*"%>
+	<%@ page import="org.apache.commons.lang3.tuple.Pair"%>
+	<%@ page import="java.net.URLEncoder" %>
 	
 	
 	<%
-	List<Book> searchResults = (List<Book>) request.getAttribute("searchResults");
+	String searchTerm ="";
+	String categoryID="";
+	if(request.getAttribute("searchTermAttr")!= null){
+		 searchTerm = (String) request.getAttribute("searchTermAttr");
+	}
+	if(request.getAttribute("categoryIDAttr")!= null){
+		 categoryID =(String) request.getAttribute("categoryIDAttr");
+		 System.out.println(categoryID);
+	}
+	Pair<List<Book>, Integer> searchResultsPair = (Pair<List<Book>, Integer>) request.getAttribute("searchResultsPair");
+	List<Book> searchResults = searchResultsPair.getLeft();
+	Integer totalItems = searchResultsPair.getRight();	
 	List<Category> categoryResults = (List<Category>) request.getAttribute("categoryResults");
 	%>
 	<%@ include file= "header.jsp" %>
@@ -28,7 +41,7 @@
 				<div class="form-group" style="display: flex">
 					<div class="input-group border-bottom">
 						<input type="search" name=searchTerm placeholder="Search title or author ..."
-					="button-addon3"
+			
 							class="form-control bg-none border-0 mb-2" autocomplete="off"
 							autocomplete="off" />
 						<button class="btn mb-2 searchsubmit" type="submit">
@@ -56,11 +69,11 @@
 		</form>
 	</div>
 	<div id="results" class="container">
+		<div class="box">
 		<%
 		 if (searchResults != null) {
-		int count = searchResults.size();
 		%>
-		Showing All <%=count%> Books:
+		Showing All <%=totalItems%> Books:
 		<%
 		for (Book i : searchResults) {
 			
@@ -79,16 +92,55 @@
 				</div>
 			</div>
 		</a> 
+		
 		<%
 		}
-		} else if (searchResults.isEmpty() || searchResults == null) {
+		} else if (searchResults == null) {
 			%>
 			<p>No results found</p>
 			<%
 			} 
 %>
-
-		</div>
+</div>
+<% if(totalItems >0){int pageSize = 6; // Number of books to display per page
+		   String bookPageNumber = request.getParameter("bookPageNumber");
+		   int totalBookPages = (int) Math.ceil((double)(totalItems + pageSize - 1) / pageSize);    
+		   int currentBookPage = (bookPageNumber != null) ? Integer.parseInt(bookPageNumber) : 1;
 		
+		   //Calculate start and end pages for pagination
+		   int startBookPage = Math.max(1, currentBookPage - 2);
+		   int endBookPage = Math.min(totalBookPages, startBookPage + 4); // +4 because we want to show 5 pages
+		   startBookPage = Math.max(1, endBookPage - 4); // recalculate in case endPage is lower than startPage + 4
+		
+		%>
+		<nav aria-label="Page navigation example">
+		  <ul class="pagination justify-content-center">
+		    <% if (currentBookPage > 1) { %>
+		        <li class="page-item"><a class="page-link" href="?bookPageNumber=1&searchTerm=<%=searchTerm%>&categoryID=<%=categoryID%>" class=""><<</a></li>
+		        <li class="page-item"><a class="page-link" href="?bookPageNumber=<%=currentBookPage-1%>&searchTerm=<%=searchTerm%>&categoryID=<%=categoryID%>" class=""><</a></li>
+		        <% if (startBookPage > 1) { %> 
+		            <li class="page-item"><span class="page-link">...</span></li> 
+		        <% } %>
+		    <% }
+		    
+		    for (int j = startBookPage; j <= endBookPage; j++) {
+		        // Add the active class to the current page
+		        String activeClass = (j == currentBookPage) ? "active" : "";
+		    %>
+		        <li class="page-item <%=activeClass%>"><a class="page-link" href="?bookPageNumber=<%=j%>&searchTerm=<%=searchTerm%>&categoryID=<%=categoryID%>" class=""><%=j%></a></li>
+		    <%
+		    }
+		    
+		    if (currentBookPage < totalBookPages) {
+		        if (endBookPage < totalBookPages) { %> 
+		            <li class="page-item"><span class="page-link">...</span></li> 
+		        <% } %>
+		        <li class="page-item"><a class="page-link" href="?bookPageNumber=<%=currentBookPage+1%>&searchTerm=<%=searchTerm%>&categoryID=<%=categoryID%>" class="">></a></li>
+		        <li class="page-item"><a class="page-link" href="?bookPageNumber=<%=totalBookPages%>&searchTerm=<%=searchTerm%>&categoryID=<%=categoryID%>" class="">>></a></li>
+		    <% } }%>	
+		  </ul>
+		</nav>
+		</div>
+		<%@include file="footer.jsp"%>
 		</body>
 		</html>

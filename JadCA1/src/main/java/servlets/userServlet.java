@@ -1,6 +1,8 @@
 package servlets;
 
 import java.io.IOException;
+import java.util.List;
+
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -9,7 +11,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import models.User;
+import models.*;
+import services.CartServices;
 import services.UserServices;
 
 /**
@@ -41,9 +44,11 @@ public class userServlet extends HttpServlet {
 			int custID = (Integer) session.getAttribute("userID");
 			System.out.print(custID);
 			User customerDetails = UserServices.getCustomerDetails(custID);
+			List<Order> orderDetails = CartServices.getOrders(custID);
 			System.out.print("hell");
 			System.out.println(customerDetails);
 			request.setAttribute("customerDetails", customerDetails);
+			request.setAttribute("orderDetails", orderDetails);
 			request.getRequestDispatcher("profile.jsp").forward(request, response);
 		} else {
 			request.getRequestDispatcher("login.jsp").forward(request, response);
@@ -86,7 +91,7 @@ public class userServlet extends HttpServlet {
 						session.setAttribute("userID", loginUser.getUserID());
 						session.setAttribute("role", loginUser.getRole());
 						String contextPath = request.getContextPath();
-						response.sendRedirect(contextPath + "/");
+						response.sendRedirect(contextPath + "/index.jsp");
 					} else {
 						request.setAttribute("error", "user credentials are incorrect.");
 						dispatcher = request.getRequestDispatcher("login.jsp");
@@ -172,12 +177,17 @@ public class userServlet extends HttpServlet {
 
 					break;
 				}
-				case "logout":
+				case "logout":{
 					System.out.println("Log out function is called");
 					session.invalidate();
-					response.sendRedirect(request.getContextPath() + "/index.jsp");
+					response.sendRedirect("index.jsp");
 					break;
 				}
+				case "clearOrder":{
+					doGet(request,response);
+					break;
+				}
+			}
 			}
 
 		} catch (Exception e) {

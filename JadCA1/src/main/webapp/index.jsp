@@ -1,5 +1,9 @@
+<%@page import="java.util.List"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
+    <%@ page import="models.*" %>
+    <%@ page import="services.*" %>
+    <%@ page import="java.util.*" %>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -10,13 +14,21 @@
 
 <style type="text/css">
     <%@include file="/css/navbar.css" %>
-    <%@include file="/css/index.css" %>
+    <%@include file="/css/indexPage.css" %>
     <%@include file="/root/css/bootstrap.min.css" %>
 </style>
+
+<%
+List<Book> bookList = new ArrayList<Book>();
+for(int i =8;i<11;i++) {
+	bookList.add(BookServices.fetchBookDataByID(i));
+}
+Book bookOfMonth = BookServices.getBookOfTheMonth();
+%>
 </head>
 
 <body>
-	<%@ include file= "header.jsp" %>
+	<%@ include file="header.jsp" %>
 	<!-- beginning of home page -->
 	<% if(request.getAttribute("message")!= null){
 		String message = (String)request.getAttribute("message");
@@ -39,19 +51,16 @@
 		</header>
 		<div class="headerBooks">
 			<div class="bookList d-flex justify-content-center">
-				<div class="book">
-					<img class="bookCover" src="./img/SMMA(T).jpg" alt="smma" />
-					<h3 class="text-center">Book Title</h3>
+			<%for (Book book : bookList){ 
+				%>
+				<a href="/JadCA1/bookDetails.jsp?bookID=<%=book.getBookID()%>">
+				<div class="bookDisplay">
+					<img class="bookCover" src="<%="https://res.cloudinary.com/dgf2upkwf/image/upload/v1686673253/" + book.getImageUrl() + ".jpg"%>" alt="smma" />
+					<h3 class="text-center"><%=book.getTitle() %></h3>
 				</div>
-				<div class="book">
-					<img class="bookCover" src="./img/SMMA(T).jpg" alt="smma" />
-					<h3 class="text-center">Book Title</h3>
-				</div>
-				<div class="book">
-					<img class="bookCover" src="./img/SMMA(T).jpg" alt="smma"/>
-					
-					<h3 class="text-center">Book Title</h3>
-				</div>
+				</a>
+			<%} %>
+				
 			</div>
 			<a href="/JadCA1/search"><button class="btn viewMore">View
 					More</button></a>
@@ -60,15 +69,11 @@
 	<div class="bookOfMonth d-flex justify-content-evenly">
 		<div class="text">
 			<h5>Book of the month</h5>
-			<h2 class="fst-italic" id="bookOfMonthTitle">Book Title</h2>
-			<p class="fst-italic" id="bookOfMonthAuthor">By Author Name</p>
-			<p id="bookOfMonthDesc">Lorem ipsum dolor sit amet consectetur
-				adipisicing elit. Corporis necessitatibus vel, libero impedit
-				tempore repellendus fugiat doloribus laudantium quasi? Itaque iure,
-				optio ex temporibus tempora obcaecati similique. Vel, aperiam
-				architecto!</p>
+			<h2 class="fst-italic" id="bookOfMonthTitle"><%=bookOfMonth.getTitle()%></h2>
+			<p class="fst-italic" id="bookOfMonthAuthor"><%=bookOfMonth.getAuthor()%></p>
+			<p id="bookOfMonthDesc"><%=bookOfMonth.getDescription()%></p>
 		</div>
-		<img src="./img/SMMA(T).jpg" alt="smma" />
+		<img src=<%="https://res.cloudinary.com/dgf2upkwf/image/upload/v1686673253/" + bookOfMonth.getImageUrl() + ".jpg"%> alt="smma" />
 	</div>
 <%@include file="footer.jsp"%>
 </body>
