@@ -66,7 +66,8 @@ img {
 
 .bookDesc {
   background-color: var(--mainBlue);
-  height: 20vh;
+  min-height: 20vh;
+  padding: 20px;
   display: flex;
   flex-direction: column;
   align-content: center;

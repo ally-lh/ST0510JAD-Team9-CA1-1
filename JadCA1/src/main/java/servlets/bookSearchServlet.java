@@ -14,7 +14,7 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
+import org.apache.commons.lang3.tuple.Pair;
 /**
  * Servlet implementation class publicBookServlet
  */
@@ -38,14 +38,23 @@ public class bookSearchServlet extends HttpServlet {
 //		response.getWriter().append("Served at: ").append(request.getContextPath());
 		String searchTerm = request.getParameter("searchTerm");
 		String searchCat= request.getParameter("categoryID");
-		List<Book> searchResults = new ArrayList<Book>();
+		String pageNumberStr = request.getParameter("bookPageNumber");
+		System.out.println(searchTerm);
+		System.out.println(searchCat);
+		if(pageNumberStr == null) {
+			pageNumberStr = "1";
+		}
+		int pageNumber = Integer.parseInt(pageNumberStr);
+		Pair<List<Book>, Integer> searchResultsPair = Pair.of(null,0);
 		if(searchTerm!=null || searchCat!=null) {
-			searchResults = BookServices.performSearch(searchTerm,searchCat); // Implement your search logic here
+			searchResultsPair = BookServices.performSearch(searchTerm,searchCat,pageNumber); // Implement your search logic here
 			
 		}
 		List<Category> categoryData = CategoryServices.getAllCategory();
+		request.setAttribute("searchTermAttr", searchTerm);
+		request.setAttribute("categoryIDAttr", searchCat);
         request.setAttribute("categoryResults", categoryData);
-        request.setAttribute("searchResults", searchResults);
+        request.setAttribute("searchResultsPair", searchResultsPair);
         RequestDispatcher dispatcher = request.getRequestDispatcher("home.jsp");
         dispatcher.forward(request, response);
 	}

@@ -96,7 +96,7 @@ if(request.getAttribute("message")!= null){
                 <div class="input-group">
                   <span class="input-group-text">Phone</span>
                   <input type="text" aria-label="Phone" class="form-control" 
-                  name="phoneNum" value="<%= customerDetails.getPhone() %>" required"/>
+                  name="phoneNum"pattern="^\d{10}$" value="<%= customerDetails.getPhone() %>" required"/>
                 </div>
                 <div class="linebreak"></div>
                 <div class="input-group">
@@ -137,7 +137,7 @@ if(request.getAttribute("message")!= null){
                   </tr>
                 </thead>
                 <tbody>
-                <% List<Order> orderList = CartServices.getOrders(customerDetails.getUserID());
+                <% List<Order> orderList = (List<Order>) request.getAttribute("orderDetails");
                 	if(orderList.size() > 0){ 
                 		for(Order order : orderList){ 
                 	
@@ -151,7 +151,12 @@ if(request.getAttribute("message")!= null){
                   <%}
                 		} else { 
                 		%>
-                		<p>You have no orders.</p>
+                		 <tr>
+                    <th scope="row">You have no orders.</th>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                  </tr>
                 		<%} %>
                 </tbody>
               </table>

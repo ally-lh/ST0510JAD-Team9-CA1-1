@@ -1,7 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
 <%@ page import="models.Book"%>
-   <%@ page import="services.BookServices" %>
+<%@ page import="services.BookServices"%>
 <!DOCTYPE html>
 <html>
 <head>
@@ -24,7 +24,12 @@
 	function incrementQuantity() {
 		var quantityInput = document.getElementById("quantity");
 		var currentQuantity = parseInt(quantityInput.value);
-		quantityInput.value = currentQuantity + 1;
+		var bookQuantity = parseInt(document.getElementById("bookQuantity").value);
+		if (currentQuantity < bookQuantity) {
+			quantityInput.value = currentQuantity + 1;
+		} else {
+			alert('You cannot order more than the available quantity of this book.');
+		}
 	}
 </script>
 </head>
@@ -36,61 +41,65 @@
 		// Display book details
 	%>
 
-	<%@ include file= "header.jsp" %>
- <div class="bookMain">
-      <div class="container d-flex">
-       <img
-		src=<%="https://res.cloudinary.com/dgf2upkwf/image/upload/v1686673253/" + book.getImageUrl() + ".jpg"%>
-		alt="Image Description" width="200px">
-        <div class="details text-white">
-          <div id="title"><%=book.getTitle() %></div>
-          <div id="rating"><%=book.getRating() %></div>
-          <div id="author"><%= book.getAuthor()%></div>
-          <div id="category"><%=book.getCategory() %></div>
-          <div class="tinyDeets d-flex">
-            <div id="ISBN"><%=book.getISBN() %></div>
-            <div id="publisher"><%=book.getPublisher() %></div>
-            <div id="publishDate"><%=book.getPubDate() %></div>
-          </div>
-        </div>
-      </div>
-    </div>
-    <div class="bookDesc">
-      <div class="container">
-        <h3>Description</h3>
-        <p>
-   <%=book.getDescription() %>
-        </p>
-      </div>
-    </div>
-    <div class="priceBar container d-flex justify-content-end">
-      <div id="price">$<%=book.getPrice() %></div>
+	<%@ include file="header.jsp"%>
+	<div class="bookMain">
+		<div class="container d-flex">
+			<img
+				src=<%="https://res.cloudinary.com/dgf2upkwf/image/upload/v1686673253/" + book.getImageUrl() + ".jpg"%>
+				alt="Image Description" width="200px">
+			<div class="details text-white">
+				<div id="title"><%=book.getTitle()%></div>
+				<div id="rating"><%=book.getRating()%></div>
+				<div id="author"><%=book.getAuthor()%></div>
+				<div id="category"><%=book.getCategory()%></div>
+				<div class="tinyDeets d-flex">
+					<div id="ISBN"><%=book.getISBN()%></div>
+					<div id="publisher"><%=book.getPublisher()%></div>
+					<div id="publishDate"><%=book.getPubDate()%></div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="bookDesc">
+		<div class="container">
+			<h3>Description</h3>
+			<p>
+				<%=book.getDescription()%>
+			</p>
+		</div>
+	</div>
+	<div class="priceBar container d-flex justify-content-end">
+		<div id="price">
+			$<%=book.getPrice()%></div>
+		<%
+		if (book.getQuantity() != 0) {
+		%>
+		<form action="Cart" method="post">
+			<input type="hidden" name="action" value="addToCart"> <input
+				type="hidden" name="bookID" value="<%=book.getBookID()%>">
+			<input type="hidden" name="title" value="<%=book.getTitle()%>">
+			<input type="hidden" name="imageUrl" value="<%=book.getImageUrl()%>">
+			<input type="hidden" name="price" value="<%=book.getPrice()%>">
+			<input type="hidden" id="bookQuantity"
+				value="<%=book.getQuantity()%>">
+			<button type="button" onclick="decrementQuantity()">-</button>
+			<input type="text" id="quantity" name="quantity" value="1" readonly>
+			<button type="button" onclick="incrementQuantity()">+</button>
+			<input type="submit" value="add to cart">
+		</form>
+		<%
+		} else {
 
-      <form action="Cart" method="post">
-      	<input type="hidden" name="action" value="addToCart">
-		<input type="hidden" name="bookID" value="<%= book.getBookID() %>">
-		<input type="hidden" name="title" value="<%=book.getTitle()%>">
-		<input type="hidden" name="imageUrl" value="<%=book.getImageUrl()%>">
-		<input type="hidden" name="price" value="<%=book.getPrice()%>">
-		<button type="button" onclick="decrementQuantity()">-</button>
-		<input type="text" id="quantity" name="quantity" value="1" readonly>
-		<button type="button" onclick="incrementQuantity()">+</button>
-		<input type="submit" value="add to cart">
-	</form>
-    </div>
-    <footer class="text-center bg-dark text-white p-4">
-      Copyright @ JAD-Bookstore
-    </footer>
-
-	
+		%>
+		<p class="text-danger">out of stock</p>
+	</div>
 	<%
+	}
 	} else {
-	// Book not found or not available
 	%>
 	<p>Book not found or not available.</p>
 	<%
 	}
 	%>
-<%@include file="footer.jsp"%>
 </body>
 </html>

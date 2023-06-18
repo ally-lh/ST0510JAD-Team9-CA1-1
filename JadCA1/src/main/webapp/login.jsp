@@ -31,17 +31,18 @@
           <div class="errorMsg"><%=error%></div>
           <form action="user" method="post">
           	<input type="hidden" name="action" value="login">
-            <input type="text"  name="UserIdentification" placeholder="Email" />
+            <input type="text"  name="UserIdentification" placeholder="Email Or Username" />
 
             <input type="password" name="password" placeholder="Password" />
 
             <button type="submit" class="btn signUpbtn">Login</button>
           </form>
-          <a href="/JadCA1/signup.jsp" class="forgotPassword"
+          <a href="/JadCA1/register.jsp" class="forgotPassword"
             >Don't have an account?</a
           >
         </div>
       </div>
     </div>
+    <%@include file="footer.jsp"%>
 </body>
 </html>

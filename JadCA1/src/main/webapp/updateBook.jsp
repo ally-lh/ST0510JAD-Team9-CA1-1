@@ -17,19 +17,30 @@
 </head>
 <body>
 <%@ include file="header.jsp" %>
-    <%Book bookData =null;
-    if(request.getAttribute("bookResult")!= null){
-    	 bookData =(Book) request.getAttribute("bookResult");
-    }else {
-    	request.getRequestDispatcher("admin").forward(request,response);
-    	return;
+    <%
+    Book bookData =null;
+    if(session.getAttribute("role")!=null){
+    	if(((String) session.getAttribute("role")).equalsIgnoreCase("admin")){
+    		
+    	    if(request.getAttribute("bookResult")!= null){
+    	    	 bookData =(Book) request.getAttribute("bookResult");
+    	    }else {
+    	    	request.getRequestDispatcher("admin").forward(request,response);
+    	    	return;
+    	    }
+    	}else{
+    		response.sendRedirect("login.jsp");
+    	}
+    }else{
+    	response.sendRedirect("login.jsp");
     }
     %>
     <% if(request.getAttribute("message")!= null){
         String message = (String)request.getAttribute("message");
         %>
         <script>
-            alert('<%= message %>');
+       
+        alert('<%= message %>');
         </script>
     <%
     }

@@ -16,13 +16,13 @@ import services.CategoryServices;
  * Servlet implementation class indexLoadServlet
  */
 @WebServlet("/home")
-public class indexLoadServlet extends HttpServlet {
+public class homeServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 
 	/**
 	 * @see HttpServlet#HttpServlet()
 	 */
-	public indexLoadServlet() {
+	public homeServlet() {
 		super();
 		// TODO Auto-generated constructor stub
 	}
@@ -36,23 +36,7 @@ public class indexLoadServlet extends HttpServlet {
 		// TODO Auto-generated method stub
 		// response.getWriter().append("Served at: ").append(request.getContextPath());
 		RequestDispatcher dispatcher;
-//		String pageNumberStr = request.getParameter("pageNumber");
-//		System.out.println(pageNumberStr);
-//		String recordsPerPageStr = request.getParameter("recordPerPage");
-//		if (pageNumberStr == null) {
-//			pageNumberStr = "1";
-//			System.out.println("pageNumber is null");
-//		}
-//		if (recordsPerPageStr == null) {
-//			recordsPerPageStr = "6";
-//			System.out.println("records per page is null");
-//		}
-//		int pageNumber = Integer.parseInt(pageNumberStr);
-//		int recordsPerPage = Integer.parseInt(recordsPerPageStr);
-//		System.out.println(pageNumber);
-//		System.out.println(recordsPerPage);
-//		List<Book> bookDataResults = BookServices.fetchBookData(pageNumber, recordsPerPage);
-//		int bookAmount = BookServices.fetchBookNumbers();
+
 		List<Category> categoryDataResult = CategoryServices.getAllCategory();
 		//request.setAttribute("bookResults", bookDataResults);
 		request.setAttribute("categoryResults", categoryDataResult);
@@ -68,6 +52,7 @@ public class indexLoadServlet extends HttpServlet {
 	protected void doPost(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 		// TODO Auto-generated method stub
+		
 	}
 
 }

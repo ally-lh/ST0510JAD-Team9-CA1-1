@@ -1,6 +1,5 @@
 .headLineSection header {
   background-color: var(--mainBlue);
-  height: 40vh;
   justify-content: center;
   align-items: center;
   display: flex;
@@ -10,16 +9,24 @@
   line-height: 2rem;
   font-family: Arial, Helvetica, sans-serif;
   font-weight: bolder;
+  padding: 40px;
 }
 .headLineSection header h1 {
   font-size: 3.5rem;
   line-height: 3rem;
   font-family: "Barlow", sans-serif;
 }
+.headLineSection header p { 
+	margin-bottom: 30px;
+	font-size: medium;
+	line-height: normal; 
+	
+}
 .headerBooks {
   position: relative;
   top: -50px;
 }
+
 .headerBooks button {
   margin: 0 auto;
   margin-top: 40px;
@@ -29,15 +36,19 @@
   font-family: "Barlow", sans-serif;
 }
 
-.book {
-  margin: 0 80px;
+.bookDisplay {
+  margin: 0 80px !important;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
 }
 
-.book img {
-  height: 40vh;
-  width: auto;
-  margin: 0 auto;
-  border: white 5px solid;
+.bookDisplay img {
+  height: 40vh !important;
+  width: auto !important;
+  margin: 0 auto !important;
+  border: white 5px solid !important;
 }
 
 .bookOfMonth {
@@ -60,4 +71,9 @@
   width: auto;
   height: 50vh;
   border: white 5px solid;
+}
+
+.headerBooks a { 
+	color: var(--mainBlue);
+	text-decoration: none;
 }

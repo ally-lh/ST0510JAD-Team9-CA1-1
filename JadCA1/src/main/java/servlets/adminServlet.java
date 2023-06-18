@@ -61,30 +61,32 @@ public class adminServlet extends HttpServlet {
 		}
 		String role = (String) session.getAttribute("role");
 		if (role.equalsIgnoreCase("admin")) {
-			String pageNumberStr = request.getParameter("pageNumber");
-			System.out.print(pageNumberStr);
-			String recordsPerPageStr = request.getParameter("recordsPerPage");
+			String bookPageNumberStr = request.getParameter("bookPageNumber");
+			String userPageNumberStr = request.getParameter("userPageNumber");
+			System.out.print(bookPageNumberStr);
 			
-			if (pageNumberStr == null) {
-	            pageNumberStr = "1";
+			if (bookPageNumberStr == null) {
+				bookPageNumberStr = "1";
 	            System.out.println("pageNumber is null");
 	        }
-	        if (recordsPerPageStr == null) {
-	            recordsPerPageStr = "6";
-	            System.out.println("records per page is null");
+			if (userPageNumberStr == null) {
+				userPageNumberStr = "1";
+	            System.out.println("pageNumber is null");
 	        }
-	        int pageNumber = Integer.parseInt(pageNumberStr);
-	        int recordsPerPage = Integer.parseInt(recordsPerPageStr);
-	        System.out.println(pageNumber);
-	        System.out.println(recordsPerPage);
-			List<Book> bookDataResults = BookServices.fetchBookData(pageNumber, recordsPerPage);
+	        
+	        int bookPageNumber = Integer.parseInt(bookPageNumberStr);
+	        int userPageNumber = Integer.parseInt(userPageNumberStr);
+	        System.out.println(bookPageNumber);
+			List<Book> bookDataResults = BookServices.fetchBookData(bookPageNumber, 6);
 			List<Category> categoryDataResult = CategoryServices.getAllCategory();
-			List<User> userResult = UserServices.getAllUsers();
+			List<User> userResult = UserServices.getAllUsers(userPageNumber);
 			int bookAmount = BookServices.fetchBookNumbers();
-			request.setAttribute("recordsPerPageStr", bookAmount);
+			int userCount = UserServices.getTotalUserCount();
+			request.setAttribute("bookAmount", bookAmount);
 			request.setAttribute("bookResults", bookDataResults);
 			request.setAttribute("categoryResults", categoryDataResult);
 			request.setAttribute("userData", userResult);
+			request.setAttribute("userAmount",userCount);
 			request.getRequestDispatcher("adminDashboard.jsp").forward(request, response);
 		} else {
 			response.sendRedirect("login.jsp");
