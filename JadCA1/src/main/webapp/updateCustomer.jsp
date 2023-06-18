@@ -27,7 +27,7 @@
     <label for="email">Email:</label><br>
     <input type="email" id="email" name="email" value="<%= customerDetails.getEmail() %>" required><br>
     <label for="phoneNum">Phone Number:</label><br>
-    <input type="tel" id="phoneNum" name="phoneNum" value="<%= customerDetails.getPhone() %>" required><br>
+    <input type="tel" id="phoneNum" name="phoneNum"  pattern="^\d{10}$" title ="phone must be 10 digits."value="<%= customerDetails.getPhone() %> " required><br>
     <label for="password">Password:</label><br>
     <input type="text" id="password" name="password" value="<%= customerDetails.getPassword() %>" required><br>
     <input type="submit" value="Update">

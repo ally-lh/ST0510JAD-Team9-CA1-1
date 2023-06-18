@@ -51,6 +51,16 @@ public class adminServlet extends HttpServlet {
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
+		System.out.println(System.getProperty("catalina.base") + "/work/Catalina/localhost/JadCA1/tmp");
+        String tmpFolderPath = System.getProperty("catalina.base") + "/work/Catalina/localhost/JadCA1/tmp";
+        File tmpFolder = new File(tmpFolderPath);
+
+        if (!tmpFolder.exists()) {
+            boolean created = tmpFolder.mkdirs();
+            if (!created) {
+                throw new IOException("Failed to create temporary folder.");
+            }
+        }
 		// TODO Auto-generated method stub
 //		response.getWriter().append("Served at: ").append(request.getContextPath());
 		HttpSession session = request.getSession();
@@ -100,6 +110,16 @@ public class adminServlet extends HttpServlet {
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
+		System.out.println(System.getProperty("catalina.base") + "/work/Catalina/localhost/JadCA1/tmp");
+        String tmpFolderPath = System.getProperty("catalina.base") + "/work/Catalina/localhost/JadCA1/tmp";
+        File tmpFolder = new File(tmpFolderPath);
+
+        if (!tmpFolder.exists()) {
+            boolean created = tmpFolder.mkdirs();
+            if (!created) {
+                throw new IOException("Failed to create temporary folder.");
+            }
+        }
 		// TODO Auto-generated method stub
 		HttpSession session = request.getSession();
 		System.out.println("Admin Servlet is called");

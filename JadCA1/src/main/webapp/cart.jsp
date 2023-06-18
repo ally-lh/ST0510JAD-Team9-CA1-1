@@ -73,7 +73,7 @@
 		   </tbody>
           </table>
           <div class="checkOutSec d-flex justify-content-end">
-            <h4 id="totalPrice"><%=totalPrice %> </h4>
+          <h4 id="totalPrice"><%=String.format("%.2f",totalPrice) %> </h4>
            	<form action="Cart" method="post">
            	<input type="hidden" name="action" value="checkOut">
            	<input type="submit" value="Check Out" class="btn btn-success">

@@ -273,11 +273,10 @@ public class CartServices {
 
 	// Helper function to calculate total amount
 	private static double calculateTotalAmount(List<Book> userBookList) {
-		double total = 0;
-		for (Book book : userBookList) {
-			total += book.getPrice() * book.getQuantity();
-		}
-		return total;
-	}
-
+        double total = 0;
+        for (Book book : userBookList) {
+            total += book.getPrice() * book.getQuantity();
+        }
+        return Math.round(total * 100.0) / 100.0;
+    }
 }

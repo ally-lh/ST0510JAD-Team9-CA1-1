@@ -29,9 +29,10 @@
           <h3>Sign Up</h3>
           <div class="bgline"></div>
           <form action="user" method="POST">
+          	<input type="hidden" name="action" value="register">
             <input type="text" name="username" placeholder="Username" required/>
             <input type="text" name="email" placeholder="Email" required/>
-            <input type="text" name="phoneNum" placeholder="Phone" required/>
+            <input type="text" name="phoneNum" placeholder="Phone" pattern="^\d{10}$" title ="phone must be 10 digits." required/>
             <input type="password" name="password" placeholder="Password" required />
             <input
               type="password"

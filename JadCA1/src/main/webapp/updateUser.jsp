@@ -74,6 +74,7 @@ if(session.getAttribute("role")!= null){
               id="phoneNum"
               name="phoneNum"
               class="form-control"
+               value="<%=user.getPhone() == null ? "": user.getEmail() %>"
             />
           </div>
 
